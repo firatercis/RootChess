@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b5f74eeeaee4735ba689d88bbf349c, type: 3}
+  m_Name: Board_Standard
+  m_EditorClassIdentifier: 
+  lightSquares:
+    normal: {r: 1, g: 0.7213094, b: 0.4198113, a: 1}
+    legal: {r: 0.6849862, g: 1, b: 0.48584908, a: 1}
+    selected: {r: 1, g: 0.99450445, b: 0.3537736, a: 1}
+    moveFromHighlight: {r: 0.6556604, g: 0.71450484, b: 1, a: 1}
+    moveToHighlight: {r: 0.654902, g: 0.7137255, b: 1, a: 1}
+  darkSquares:
+    normal: {r: 0.8018868, g: 0.30548066, b: 0, a: 1}
+    legal: {r: 0.5754078, g: 0.8679245, b: 0.38892844, a: 0.90588236}
+    selected: {r: 0, g: 0, b: 0, a: 0}
+    moveFromHighlight: {r: 0, g: 0, b: 0, a: 0}
+    moveToHighlight: {r: 0, g: 0, b: 0, a: 0}
