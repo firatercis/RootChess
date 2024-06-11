@@ -21,6 +21,13 @@
             return result;
         }
 
+        static public bool operator ==(Coord v1,Coord v2) {
+            return v1.rankIndex == v2.rankIndex && v1.fileIndex == v2.fileIndex;
+        }
+        static public bool operator !=(Coord v1, Coord v2) {
+            return v1.rankIndex != v2.rankIndex && v1.fileIndex == v2.fileIndex;
+        }
+
 
         public bool IsLightSquare()
         {

@@ -124,6 +124,8 @@ namespace SoftwareKingdom.Chess.Core
 
             // Filter non-legal moves if check legal is selected.
 
+        
+
             return checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result;
         }
 
@@ -155,10 +157,41 @@ namespace SoftwareKingdom.Chess.Core
 
             boardState[move.targetCoord] = boardState[move.startCoord];
             boardState[move.startCoord] = ChessState.EMPTY_SQUARE;
+
+
+            // Change en passant state
+            SaveEnPassantCoord(boardState, move);
+            CheckApplyEnPassant(boardState, move);
             SwitchTurn(boardState);
+
         }
 
-      
+        private static void CheckApplyEnPassant(ChessState boardState, Move move) {
+            if (move.specialCondition == SpecialConditions.EnPassantCapture)
+            {
+                int oneBackward = -1;
+                if (boardState.turn == ChessState.BLACK)
+                {
+                    oneBackward =1 ;
+                }
+
+                boardState[move.targetCoord + new Coord(oneBackward, 0)] = ChessState.EMPTY_SQUARE;
+            }
+        }
+
+        private static void SaveEnPassantCoord(ChessState boardState, Move move) {
+            if (move.specialCondition != SpecialConditions.PawnTwoForward)
+            {
+                boardState.enPassantCoord = ChessState.NO_EN_PASSANT_COORD;
+            }
+            else
+            {
+                int enPassantRankIndex = (move.targetCoord.rankIndex + move.startCoord.rankIndex) / 2;
+                int enPassantFileIndex = move.targetCoord.fileIndex;
+                boardState.enPassantCoord = new Coord(enPassantRankIndex, enPassantFileIndex);
+            }
+        }
+
 
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual
             return GenerateBoardMoves(boardState, checkLegal: true);

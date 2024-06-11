@@ -64,19 +64,19 @@ namespace SoftwareKingdom.Chess.Core
 
         //public List<Move> GenerateCastlingMoves(ChessState boardState, Coord sourceCoord) {
         //    string ownPiece = boardState[sourceCoord];
-        //    //List<Move> result = new List<Move>();
-        //    //if (!boardState.IsInTurn(ownPiece))
-        //    //{
-        //    //    return result;
-        //    //}
-        //    //// Check king side castle
+        //    List<Move> result = new List<Move>();
+        //    if (!boardState.IsInTurn(ownPiece))
+        //    {
+        //        return result;
+        //    }
+        //    // Check king side castle
 
-        //    //string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "";
+        //    string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "";
 
 
-        //    //if(boardState.flags.Contains())
+        //    if (boardState.flags.Contains())
 
-        //    //return result;
+        //        return result;
         //}
 
         public char GetPieceType()

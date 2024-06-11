@@ -25,15 +25,19 @@ namespace SoftwareKingdom.Chess.Core
         public const char BLACK_PREFIX = 'B';
         public const int PIECE_NOTATION_INDEX = 1;
         public const int N_SIDES = 2;
+        public static Coord NO_EN_PASSANT_COORD = new Coord(-1,-1);
+
         // Attributes
         public string[,] board; 
         public List<string> flags;
+        public Coord enPassantCoord;
         public int turn; // 0: white, 1:black
         public ChessState(int width, int height)
         {
             board = new string[height, width];
             flags = new List<string>();
             turn = 0;
+            enPassantCoord = NO_EN_PASSANT_COORD;
         }
 
         public ChessState(string[,] board, List<string> flags) // TODO: Do not copy the flags string list

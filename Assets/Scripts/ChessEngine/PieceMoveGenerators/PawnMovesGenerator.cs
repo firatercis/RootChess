@@ -56,6 +56,14 @@ namespace SoftwareKingdom.Chess.Core
                     Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
                     moves.Add(leftDiagonalTakeMove);
                 }
+
+                if (leftDiagonal == boardState.enPassantCoord)
+                {
+                    Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
+                    leftDiagonalTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
+                    moves.Add(leftDiagonalTakeMove);
+                }
+
             }
             Coord rightDiagonal = oneForward + new Coord(0, -1);
             if (boardState.IsInsideBoard(rightDiagonal))
@@ -65,6 +73,14 @@ namespace SoftwareKingdom.Chess.Core
                     Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
                     moves.Add(rightDiagonalTakeMove);
                 }
+
+                if(rightDiagonal == boardState.enPassantCoord)
+                {
+                    Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
+                    rightDiagonalTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
+                    moves.Add(rightDiagonalTakeMove);
+                }
+
             }
             
             
