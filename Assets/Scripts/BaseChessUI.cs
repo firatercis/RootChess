@@ -129,6 +129,13 @@ namespace SoftwareKingdom.Chess.UI
             if( !SeedPlantingMoveGenerator.IsSeedPlantingMove(move))
             {
                 pieceLiner.MovePiece(move.startCoord, move.targetCoord, position);
+
+                if(move.specialCondition == SpecialConditions.EnPassantCapture)
+                {
+                    Coord enPassantCoord = new Coord(move.startCoord.rankIndex, move.targetCoord.fileIndex);
+                    pieceLiner.CheckClearSquare(enPassantCoord);
+                }
+
             }
             else
             {

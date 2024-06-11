@@ -75,6 +75,8 @@ namespace SoftwareKingdom.Chess.UI {
         {
             if (piecePrefabsDict == null) RegisterPiecePrefabs();
 
+           
+
             //GameObject pieceGO = Instantiate(piecePrefabsDict[pieceNotation]);
             PieceController pieceController = Instantiate(basePiecePrefab);
             pieceController.SetMainSprite(pieceSpritesDict[pieceNotation]);
@@ -97,13 +99,20 @@ namespace SoftwareKingdom.Chess.UI {
             // TODO.
         }
 
-        public void MovePiece(Coord startCoord, Coord targetCoord, Vector3 absolutePosition)
-        {
+        public void MovePiece(Coord startCoord, Coord targetCoord, Vector3 absolutePosition) {
             GameObject piece = coordPieceDictionary[startCoord];
             if (piece == null) return;
             coordPieceDictionary.Remove(startCoord);
-            GameObject pieceInTargetSquare = null;
+            
 
+            CheckClearSquare(targetCoord);
+
+            coordPieceDictionary.Add(targetCoord, piece);
+            piece.transform.DOJump(absolutePosition, 1.0f, 1, 0.5f); // TODO: Magic Number, and piece can move itself
+        }
+
+        public void CheckClearSquare(Coord targetCoord) {
+            GameObject pieceInTargetSquare;
             bool thereIsAPieceInTarget = coordPieceDictionary.TryGetValue(targetCoord, out pieceInTargetSquare);
 
             if (thereIsAPieceInTarget)
@@ -111,9 +120,6 @@ namespace SoftwareKingdom.Chess.UI {
                 coordPieceDictionary.Remove(targetCoord);
                 pieceInTargetSquare.SetActive(false);
             }
-
-            coordPieceDictionary.Add(targetCoord, piece);
-            piece.transform.DOJump(absolutePosition,1.0f,1,0.5f); // TODO: Magic Number, and piece can move itself
         }
 
         void RegisterPieceToCoordinate(GameObject pieceGO, Coord coord)
