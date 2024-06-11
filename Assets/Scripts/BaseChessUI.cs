@@ -135,6 +135,19 @@ namespace SoftwareKingdom.Chess.UI
                     Coord enPassantCoord = new Coord(move.startCoord.rankIndex, move.targetCoord.fileIndex);
                     pieceLiner.CheckClearSquare(enPassantCoord);
                 }
+               
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
+                    pieceLiner.MovePiece(new Coord(0,7), new Coord(0,5), position + new Vector3(-1,0,0));
+                }
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
+                    pieceLiner.MovePiece(new Coord(0,0), new Coord(0,3), position + new Vector3(+1,0,0));
+                }
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,6)){
+                    pieceLiner.MovePiece(new Coord(7,7), new Coord(7,5), position + new Vector3(-1,0,0));
+                }
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
+                    pieceLiner.MovePiece(new Coord(7,0), new Coord(7,3), position + new Vector3(+1,0,0));
+                }
 
             }
             else

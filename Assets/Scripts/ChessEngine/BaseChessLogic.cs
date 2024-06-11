@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,8 +38,8 @@ namespace SoftwareKingdom.Chess.Core
 
         public static char[] pieceLetters = { 'P', 'N', 'B', 'R', 'Q', 'K' };
 
-
         static string[] initialFlags = { "WC0-0", "WC0-0-0", "BC0-0", "BC0-0-0" };
+
 
         // Settings
 
@@ -99,6 +100,7 @@ namespace SoftwareKingdom.Chess.Core
             // King
             KingMoveGenerator kingMoveGenerator = new KingMoveGenerator();
 
+
             IPieceMoveGenerator[] pieceMoveGenerators = new IPieceMoveGenerator[] { pawnMoveGenerator, knightMoveGenerator, bishopMoveGenerator, rookMoveGenerator, queenMoveGenerator, kingMoveGenerator };
 
             Dictionary<char, IPieceMoveGenerator> pieceMoveGeneratorsDict = new Dictionary<char, IPieceMoveGenerator>();
@@ -158,38 +160,118 @@ namespace SoftwareKingdom.Chess.Core
             boardState[move.targetCoord] = boardState[move.startCoord];
             boardState[move.startCoord] = ChessState.EMPTY_SQUARE;
 
-
             // Change en passant state
             SaveEnPassantCoord(boardState, move);
             CheckApplyEnPassant(boardState, move);
+            CheckUpdateCastling(boardState, move);
+            ApplyCastling(boardState, move);
+
+
             SwitchTurn(boardState);
 
         }
 
+        // Enables En Passant move if the move is playebla
+        private static void SaveEnPassantCoord(ChessState boardState, Move move) {
+
+            // En Passant move is not valid
+            if (move.specialCondition != SpecialConditions.PawnTwoForward)
+            {
+                boardState.enPassantCoord = ChessState.NO_EN_PASSANT_COORD;
+            }
+
+            // En Passant move is valid
+            else
+            {
+                // Calculates the coordinate that the pawn will move if En Passant move is played
+                int enPassantRankIndex = (move.targetCoord.rankIndex + move.startCoord.rankIndex) / 2; 
+                int enPassantFileIndex = move.targetCoord.fileIndex;
+                boardState.enPassantCoord = new Coord(enPassantRankIndex, enPassantFileIndex);
+            }
+        }
+
+        // Applies En Passant move if it is played
         private static void CheckApplyEnPassant(ChessState boardState, Move move) {
+
+            // Calculates the coordinates of the eaten pawn by En Passant move
             if (move.specialCondition == SpecialConditions.EnPassantCapture)
             {
                 int oneBackward = -1;
                 if (boardState.turn == ChessState.BLACK)
                 {
                     oneBackward =1 ;
-                }
+                }  
 
-                boardState[move.targetCoord + new Coord(oneBackward, 0)] = ChessState.EMPTY_SQUARE;
+                boardState[move.targetCoord + new Coord(oneBackward, 0)] = ChessState.EMPTY_SQUARE; // Removes the eaten pawn by the En Passant move
             }
         }
 
-        private static void SaveEnPassantCoord(ChessState boardState, Move move) {
-            if (move.specialCondition != SpecialConditions.PawnTwoForward)
-            {
-                boardState.enPassantCoord = ChessState.NO_EN_PASSANT_COORD;
+        private static void CheckUpdateCastling(ChessState boardState, Move move){
+
+            if(boardState.turn == ChessState.WHITE){
+                if(move.startCoord == new Coord(0,4)){
+                    boardState.flags.Remove("WC0-0");
+                    boardState.flags.Remove("WC0-0-0");
+                }
+                if(move.startCoord == new Coord(0,7)){
+                    boardState.flags.Remove("WC0-0");
+                }
+                if(move.startCoord == new Coord(0,0)){
+                    boardState.flags.Remove("WC0-0-0");
+                }
+                
+            } 
+
+            if(boardState.turn == ChessState.BLACK){
+                if(move.startCoord == new Coord(7,4)){
+                    boardState.flags.Remove("BC0-0");
+                    boardState.flags.Remove("BC0-0-0");
+                }
+                if(move.startCoord == new Coord(7,7)){
+                    boardState.flags.Remove("BC0-0");
+                }
+                if(move.startCoord == new Coord(7,0)){
+                    boardState.flags.Remove("BC0-0-0");
+                }
             }
-            else
-            {
-                int enPassantRankIndex = (move.targetCoord.rankIndex + move.startCoord.rankIndex) / 2;
-                int enPassantFileIndex = move.targetCoord.fileIndex;
-                boardState.enPassantCoord = new Coord(enPassantRankIndex, enPassantFileIndex);
+        }
+
+        private static void ApplyCastling(ChessState boardState, Move move){
+            if(boardState.turn == ChessState.WHITE){
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
+                    boardState[0,5] = boardState[0,7];
+                    boardState[0,7] = ChessState.EMPTY_SQUARE;
+                }
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
+                    boardState[0,0] = boardState[0,3];
+                    boardState[0,0] = ChessState.EMPTY_SQUARE;
+                }
             }
+            if(boardState.turn == ChessState.BLACK){
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,6)){
+                    boardState[7,5] = boardState[7,7];
+                    boardState[7,7] = ChessState.EMPTY_SQUARE;
+                }
+                if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
+                    boardState[7,0] = boardState[7,3];
+                    boardState[7,0] = ChessState.EMPTY_SQUARE;
+                }
+            }
+        }
+
+        private static List<string> stringRemoveMethod(string[] stringArray, string removeElement){
+            string[] newArray = new string[stringArray.Length - 1];
+            int index = 0;
+        
+            foreach (string item in stringArray)
+            {
+                if (item != removeElement)
+                {
+                    newArray[index] = item;
+                    index++;
+                }
+            }
+            return newArray.ToList();
         }
 
 

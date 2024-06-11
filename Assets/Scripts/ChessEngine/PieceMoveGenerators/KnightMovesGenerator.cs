@@ -51,6 +51,7 @@ namespace SoftwareKingdom.Chess.Core
             return moves.ToArray();
         }
 
+    
         public char GetPieceType()
         {
             return KNIGHT_PIECE_NOTATION;

@@ -27,6 +27,8 @@ namespace SoftwareKingdom.Chess.Core
         public const int N_SIDES = 2;
         public static Coord NO_EN_PASSANT_COORD = new Coord(-1,-1);
 
+
+
         // Attributes
         public string[,] board; 
         public List<string> flags;
@@ -37,7 +39,7 @@ namespace SoftwareKingdom.Chess.Core
             board = new string[height, width];
             flags = new List<string>();
             turn = 0;
-            enPassantCoord = NO_EN_PASSANT_COORD;
+            enPassantCoord = NO_EN_PASSANT_COORD;  // Unable the En Passant move
         }
 
         public ChessState(string[,] board, List<string> flags) // TODO: Do not copy the flags string list

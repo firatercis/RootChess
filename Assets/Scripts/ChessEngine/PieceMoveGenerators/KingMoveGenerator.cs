@@ -1,8 +1,10 @@
+using System.Security.AccessControl;
 using SoftwareKingdom.Chess.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
 
 
 namespace SoftwareKingdom.Chess.Core
@@ -37,6 +39,8 @@ namespace SoftwareKingdom.Chess.Core
         {
             List<Move> moves = new List<Move>();
             string ownPiece = boardState[sourceCoord];
+            
+
             for (int i = 0; i < possibleDirections.Length; i++)
             {
                 Coord direction = possibleDirections[i];
@@ -50,6 +54,13 @@ namespace SoftwareKingdom.Chess.Core
                     moves.Add(move);
                 }
 
+                Move[] castleMoves = GenerateCastlingMoves(boardState, sourceCoord);
+
+                for(int j = 0; j < castleMoves.Length; j++){
+                    moves.Add(castleMoves[j]);
+                }
+
+                
 
 
                 //if (boardState.IsEmpty(currentTargetPosition)) // Seed deployment move
@@ -62,22 +73,88 @@ namespace SoftwareKingdom.Chess.Core
             return moves.ToArray();
         }
 
-        //public List<Move> GenerateCastlingMoves(ChessState boardState, Coord sourceCoord) {
-        //    string ownPiece = boardState[sourceCoord];
-        //    List<Move> result = new List<Move>();
-        //    if (!boardState.IsInTurn(ownPiece))
-        //    {
-        //        return result;
-        //    }
-        //    // Check king side castle
+        
+        public Move[] GenerateCastlingMoves(ChessState boardState, Coord sourceCoord)
+        {
+            string ownPiece = boardState[sourceCoord];
+            List<Move> result = new List<Move>();
+            Coord kingSideMoveDirection =  new Coord(0, +1);
+            Coord queenSideMoveDirection =  new Coord(0, -1);
+           
 
-        //    string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "";
+            if (!boardState.IsInTurn(ownPiece))
+            {
+                return result.ToArray();
+            }
 
 
-        //    if (boardState.flags.Contains())
+            string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0";
+            string queenSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0-0";
 
-        //        return result;
-        //}
+            if(boardState.flags.Contains("WC0-0")){
+                if(sourceCoord == new Coord(0,4)){
+                    if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection)){
+                        if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection + kingSideMoveDirection))
+                        {
+                            Move kingSideCastleKingMoveWhite = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection);
+                            kingSideCastleKingMoveWhite.specialCondition = SpecialConditions.Castling;
+
+                            result.Add(kingSideCastleKingMoveWhite);
+                        }
+                    }
+                }
+            }
+            if(boardState.flags.Contains("BC0-0")){
+                if(sourceCoord == new Coord(7,4)){
+                    if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection)){
+                        if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection + kingSideMoveDirection))
+                        {
+                            Move kingSideCastleKingMoveBlack = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection);
+                            kingSideCastleKingMoveBlack.specialCondition = SpecialConditions.Castling;
+
+                            result.Add(kingSideCastleKingMoveBlack);
+                        }
+                    }
+                }
+            }
+          
+
+            if(boardState.flags.Contains("WC0-0-0")){
+                if(sourceCoord == new Coord(0,4)){
+                    if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection)){
+                        if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection + queenSideMoveDirection)){
+                            if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection + queenSideMoveDirection + queenSideMoveDirection))
+                            {
+                                Move queenSideCastleKingMoveWhite = new Move(sourceCoord, sourceCoord + queenSideMoveDirection + queenSideMoveDirection);
+                                queenSideCastleKingMoveWhite.specialCondition = SpecialConditions.Castling;
+                                result.Add(queenSideCastleKingMoveWhite);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(boardState.flags.Contains("BC0-0-0")){
+                if(sourceCoord == new Coord(7,4)){
+                    if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection)){
+                        if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection + queenSideMoveDirection)){
+                            if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection + queenSideMoveDirection + queenSideMoveDirection))
+                            {
+                                Move queenSideCastleKingMoveBlack = new Move(sourceCoord, sourceCoord + queenSideMoveDirection + queenSideMoveDirection);
+                                queenSideCastleKingMoveBlack.specialCondition = SpecialConditions.Castling;
+
+                                result.Add(queenSideCastleKingMoveBlack);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return result.ToArray();
+            
+        }
+
+        
 
         public char GetPieceType()
         {

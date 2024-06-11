@@ -48,43 +48,48 @@ namespace SoftwareKingdom.Chess.Core
             }
 
             // One point diagonals
+
+            // Left diagonal
             Coord leftDiagonal = oneForward + new Coord(0, 1);
             if (boardState.IsInsideBoard(leftDiagonal))
             {
+                // Left diagonal capture move
                 if (boardState.IsEnemy(ownPiece, boardState[leftDiagonal]))
                 {
                     Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
                     moves.Add(leftDiagonalTakeMove);
                 }
 
-                if (leftDiagonal == boardState.enPassantCoord)
+                // Left diagonal En Passant capture move 
+                if (leftDiagonal == boardState.enPassantCoord) // Left diagonal En Passant check
                 {
-                    Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
-                    leftDiagonalTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
-                    moves.Add(leftDiagonalTakeMove);
+                    Move leftDiagonalEnPassantTakeMove = new Move(sourceCoord, leftDiagonal);
+                    leftDiagonalEnPassantTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
+                    moves.Add(leftDiagonalEnPassantTakeMove); // Adds left diagonal En Passant capture to possible moves
                 }
 
             }
+
+            // Right diagonal
             Coord rightDiagonal = oneForward + new Coord(0, -1);
             if (boardState.IsInsideBoard(rightDiagonal))
             {
+                // Right diagonal capture move
                 if (boardState.IsEnemy(ownPiece, boardState[rightDiagonal]))
                 {
                     Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
                     moves.Add(rightDiagonalTakeMove);
                 }
 
-                if(rightDiagonal == boardState.enPassantCoord)
+                // Right diagonal En Passant capture move 
+                if(rightDiagonal == boardState.enPassantCoord) // Right diagonal En Passant check
                 {
-                    Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
-                    rightDiagonalTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
-                    moves.Add(rightDiagonalTakeMove);
+                    Move rightDiagonalEnPassantTakeMove = new Move(sourceCoord, rightDiagonal);
+                    rightDiagonalEnPassantTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
+                    moves.Add(rightDiagonalEnPassantTakeMove); // Adds right diagonal En Passant capture to possible moves
                 }
 
             }
-            
-            
-            // En passant?  TODO:
 
 
             return moves.ToArray();
