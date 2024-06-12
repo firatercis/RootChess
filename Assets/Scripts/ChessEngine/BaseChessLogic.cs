@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using System.Globalization;
+using System.Security.Cryptography;
 using System.Net.Sockets;
 using System;
 using System.Collections;
@@ -127,8 +130,8 @@ namespace SoftwareKingdom.Chess.Core
             // Filter non-legal moves if check legal is selected.
 
         
-
-            return checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result;
+        
+            return checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result; 
         }
 
         public virtual bool IsLegal(Move move, ChessState boardState) {
@@ -138,6 +141,23 @@ namespace SoftwareKingdom.Chess.Core
             bool result = true;
             for (int i = 0; i < opponentMoves.Count; i++)
             {
+                if(move.targetCoord == new Coord(0,6) && move.startCoord == new Coord(0,4) && boardState.GetPieceNotation(move.startCoord) == KING_PIECE_NOTATION){
+                if(opponentMoves[i].targetCoord == new Coord(0,4) || opponentMoves[i].targetCoord == new Coord(0,5) || opponentMoves[i].targetCoord == new Coord(0,6))
+                        result = false;
+                }
+                if(move.targetCoord == new Coord(0,2) && move.startCoord == new Coord(0,4) && boardState.GetPieceNotation(move.startCoord) == KING_PIECE_NOTATION){
+                    if(opponentMoves[i].targetCoord == new Coord(0,4) || opponentMoves[i].targetCoord == new Coord(0,3) || opponentMoves[i].targetCoord == new Coord(0,2))
+                        result = false;
+                }
+                if(move.targetCoord == new Coord(7,6) && move.startCoord == new Coord(7,4) && boardState.GetPieceNotation(move.startCoord) == KING_PIECE_NOTATION){
+                    if(opponentMoves[i].targetCoord == new Coord(7,4) || opponentMoves[i].targetCoord == new Coord(7,5) || opponentMoves[i].targetCoord == new Coord(7,6))
+                        result = false;
+                }
+                if(move.targetCoord == new Coord(7,2) && move.startCoord == new Coord(7,4) && boardState.GetPieceNotation(move.startCoord) == KING_PIECE_NOTATION){
+                    if(opponentMoves[i].targetCoord == new Coord(7,4) || opponentMoves[i].targetCoord == new Coord(7,3) || opponentMoves[i].targetCoord == new Coord(7,2))
+                        result = false;
+                }
+
                 if (nextBoardState.IsEmpty(opponentMoves[i].targetCoord)) continue;
 
                 if (nextBoardState.GetPieceNotation(opponentMoves[i].targetCoord) == KING_PIECE_NOTATION) // Check if some enemy piece can take a king
@@ -148,6 +168,8 @@ namespace SoftwareKingdom.Chess.Core
             }
             return result;
         }
+
+     
 
         public virtual ChessState GenerateMoveSuccessor(ChessState inputState, Move move) {
             ChessState outputState = new ChessState(inputState);
@@ -165,7 +187,7 @@ namespace SoftwareKingdom.Chess.Core
             CheckApplyEnPassant(boardState, move);
             CheckUpdateCastling(boardState, move);
             ApplyCastling(boardState, move);
-
+           
 
             SwitchTurn(boardState);
 
@@ -206,7 +228,7 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
-        private static void CheckUpdateCastling(ChessState boardState, Move move){
+        private void CheckUpdateCastling(ChessState boardState, Move move){
 
             if(boardState.turn == ChessState.WHITE){
                 if(move.startCoord == new Coord(0,4)){
@@ -236,12 +258,13 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
-        private static void ApplyCastling(ChessState boardState, Move move){
+        static void ApplyCastling(ChessState boardState, Move move){
             if(boardState.turn == ChessState.WHITE){
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
                     boardState[0,5] = boardState[0,7];
                     boardState[0,7] = ChessState.EMPTY_SQUARE;
                 }
+                
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
                     boardState[0,0] = boardState[0,3];
                     boardState[0,0] = ChessState.EMPTY_SQUARE;
@@ -259,20 +282,6 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
-        private static List<string> stringRemoveMethod(string[] stringArray, string removeElement){
-            string[] newArray = new string[stringArray.Length - 1];
-            int index = 0;
-        
-            foreach (string item in stringArray)
-            {
-                if (item != removeElement)
-                {
-                    newArray[index] = item;
-                    index++;
-                }
-            }
-            return newArray.ToList();
-        }
 
 
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual

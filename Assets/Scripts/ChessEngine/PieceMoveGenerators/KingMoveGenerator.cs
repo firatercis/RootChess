@@ -98,11 +98,11 @@ namespace SoftwareKingdom.Chess.Core
                         {
                             Move kingSideCastleKingMoveWhite = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection);
                             kingSideCastleKingMoveWhite.specialCondition = SpecialConditions.Castling;
-
                             result.Add(kingSideCastleKingMoveWhite);
                         }
                     }
                 }
+                
             }
             if(boardState.flags.Contains("BC0-0")){
                 if(sourceCoord == new Coord(7,4)){
@@ -154,6 +154,7 @@ namespace SoftwareKingdom.Chess.Core
             
         }
 
+        
         
 
         public char GetPieceType()
