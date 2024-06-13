@@ -33,8 +33,13 @@ namespace SoftwareKingdom.Chess.Core
             {
                 Move oneForwardMove = new Move(sourceCoord, oneForward);
 
-                if (oneForward.rankIndex == lastRank)
-                    oneForwardMove.specialCondition = SpecialConditions.PromoteToQueen;
+                if (oneForward.rankIndex == lastRank){
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToQueen;
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToKnight;
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToBishop;
+                    oneForwardMove.specialCondition = SpecialConditions.PromoteToRook;
+
+                }
 
                 moves.Add(oneForwardMove);
             }
@@ -56,7 +61,14 @@ namespace SoftwareKingdom.Chess.Core
                 // Left diagonal capture move
                 if (boardState.IsEnemy(ownPiece, boardState[leftDiagonal]))
                 {
+                    
                     Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
+                    if (leftDiagonal.rankIndex == lastRank){
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen;
+                        leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight;
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop;
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook;
+                    }
                     moves.Add(leftDiagonalTakeMove);
                 }
 
@@ -67,6 +79,8 @@ namespace SoftwareKingdom.Chess.Core
                     leftDiagonalEnPassantTakeMove.specialCondition = SpecialConditions.EnPassantCapture;
                     moves.Add(leftDiagonalEnPassantTakeMove); // Adds left diagonal En Passant capture to possible moves
                 }
+                
+                
 
             }
 
@@ -78,6 +92,12 @@ namespace SoftwareKingdom.Chess.Core
                 if (boardState.IsEnemy(ownPiece, boardState[rightDiagonal]))
                 {
                     Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
+                    if (rightDiagonal.rankIndex == lastRank){
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen;
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight;
+                        rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop;
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook;
+                    }
                     moves.Add(rightDiagonalTakeMove);
                 }
 

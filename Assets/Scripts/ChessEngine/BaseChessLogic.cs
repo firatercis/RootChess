@@ -18,10 +18,15 @@ namespace SoftwareKingdom.Chess.Core
         const string VARIANT_NAME = "Standard";
 
 
+        const char BLACK_PIECE_NOTATION = 'B';
+        const char WHITE_PIECE_NOTATION = 'W';
+
         const char BISHOP_PIECE_NOTATION = 'B';
         const char QUEEN_PIECE_NOTATION = 'Q';
         const char ROOK_PIECE_NOTATION = 'R';
         const char KING_PIECE_NOTATION = 'K';
+        const char KNIGHT_PIECE_NOTATION = 'N';
+
         public const char EMPTY_NOTATION = '\0';
 
         const int N_DIAGONAL_DIRECTIONS = 4;
@@ -187,6 +192,7 @@ namespace SoftwareKingdom.Chess.Core
             CheckApplyEnPassant(boardState, move);
             CheckUpdateCastling(boardState, move);
             ApplyCastling(boardState, move);
+            CheckApplyPromotion(boardState, move);
            
 
             SwitchTurn(boardState);
@@ -282,6 +288,36 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
+        private static void CheckApplyPromotion(ChessState boardState, Move move){
+            if(boardState.turn == ChessState.WHITE){
+                if(move.specialCondition == SpecialConditions.PromoteToQueen){
+                    boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + QUEEN_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToBishop){
+                    boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + BISHOP_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToKnight){
+                    boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + KNIGHT_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToRook){
+                    boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + ROOK_PIECE_NOTATION;
+                }
+            }
+            if(boardState.turn == ChessState.BLACK){
+                if(move.specialCondition == SpecialConditions.PromoteToQueen){
+                    boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + QUEEN_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToBishop){
+                    boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + BISHOP_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToKnight){
+                    boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + KNIGHT_PIECE_NOTATION;
+                }
+                if(move.specialCondition == SpecialConditions.PromoteToRook){
+                    boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + ROOK_PIECE_NOTATION;
+                }
+            }
+        }
 
 
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual

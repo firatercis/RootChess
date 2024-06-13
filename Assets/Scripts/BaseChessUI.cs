@@ -136,6 +136,7 @@ namespace SoftwareKingdom.Chess.UI
                     pieceLiner.CheckClearSquare(enPassantCoord);
                 }
                
+
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
                     pieceLiner.MovePiece(new Coord(0,7), new Coord(0,5), position + new Vector3(-1,0,0));
                 }
@@ -147,6 +148,53 @@ namespace SoftwareKingdom.Chess.UI
                 }
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
                     pieceLiner.MovePiece(new Coord(7,0), new Coord(7,3), position + new Vector3(+1,0,0));
+                }
+
+                if(move.targetCoord.rankIndex == 7){
+                    string whitePieceNotation = "W";
+                    if(move.specialCondition == SpecialConditions.PromoteToQueen){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = whitePieceNotation + 'Q';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToKnight){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = whitePieceNotation + 'N';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToBishop){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = whitePieceNotation + 'B';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToRook){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = whitePieceNotation + 'R';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                }
+                if(move.targetCoord.rankIndex == 0){
+                    string blackPieceNotation = "B";
+                    if(move.specialCondition == SpecialConditions.PromoteToQueen){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = blackPieceNotation + 'Q';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToKnight){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = blackPieceNotation + 'N';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToBishop){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = blackPieceNotation + 'B';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
+                    if(move.specialCondition == SpecialConditions.PromoteToRook){
+                        pieceLiner.CheckClearSquare(move.targetCoord);
+                        string pieceNotation = blackPieceNotation + 'R';
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                    }
                 }
 
             }
