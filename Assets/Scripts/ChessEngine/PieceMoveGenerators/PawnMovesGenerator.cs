@@ -33,11 +33,13 @@ namespace SoftwareKingdom.Chess.Core
             {
                 Move oneForwardMove = new Move(sourceCoord, oneForward);
 
+                // checks if the pawn promotes
+                // only promotes to a queen 
                 if (oneForward.rankIndex == lastRank){
-                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToQueen;
-                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToKnight;
-                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToBishop;
-                    oneForwardMove.specialCondition = SpecialConditions.PromoteToRook;
+                    oneForwardMove.specialCondition = SpecialConditions.PromoteToQueen; // Special condition is set as promoting to queen
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToKnight; // Other promotions
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToBishop; // Other promotions
+                    // oneForwardMove.specialCondition = SpecialConditions.PromoteToRook; // Other promotions
 
                 }
 
@@ -63,11 +65,14 @@ namespace SoftwareKingdom.Chess.Core
                 {
                     
                     Move leftDiagonalTakeMove = new Move(sourceCoord, leftDiagonal);
+
+                    // checks if the pawn promotes
+                    // only promotes to a queen
                     if (leftDiagonal.rankIndex == lastRank){
-                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen;
-                        leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight;
-                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop;
-                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook;
+                        leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen; // Special condition is set as promoting to queen
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight; // Other promotions
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop; // Other promotions
+                        // leftDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook; // Other promotions
                     }
                     moves.Add(leftDiagonalTakeMove);
                 }
@@ -92,11 +97,14 @@ namespace SoftwareKingdom.Chess.Core
                 if (boardState.IsEnemy(ownPiece, boardState[rightDiagonal]))
                 {
                     Move rightDiagonalTakeMove = new Move(sourceCoord, rightDiagonal);
+
+                    // checks if the pawn promotes
+                    // only promotes to a queen
                     if (rightDiagonal.rankIndex == lastRank){
-                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen;
-                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight;
-                        rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop;
-                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook;
+                        rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToQueen; // Special condition is set as promoting to queen
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToKnight; // Other promotions
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToBishop; // Other promotions
+                        // rightDiagonalTakeMove.specialCondition = SpecialConditions.PromoteToRook; // Other promotions
                     }
                     moves.Add(rightDiagonalTakeMove);
                 }

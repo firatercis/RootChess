@@ -189,9 +189,15 @@ namespace SoftwareKingdom.Chess.Core
 
             // Change en passant state
             SaveEnPassantCoord(boardState, move);
+            // Apply en passant move
             CheckApplyEnPassant(boardState, move);
+
+            // Change Castling state
             CheckUpdateCastling(boardState, move);
+            // Apply castling move
             ApplyCastling(boardState, move);
+
+            // Apply the promotion
             CheckApplyPromotion(boardState, move);
            
 
@@ -288,31 +294,43 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
+        // Checks the promotion conditions 
+        // Applies the promotion if conditions are met
         private static void CheckApplyPromotion(ChessState boardState, Move move){
+            // Promotion of white pawns
             if(boardState.turn == ChessState.WHITE){
+                // Promotion to Queen
                 if(move.specialCondition == SpecialConditions.PromoteToQueen){
                     boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + QUEEN_PIECE_NOTATION;
                 }
+                // Promotion to Bishop
                 if(move.specialCondition == SpecialConditions.PromoteToBishop){
                     boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + BISHOP_PIECE_NOTATION;
                 }
+                // Promotion to Knight
                 if(move.specialCondition == SpecialConditions.PromoteToKnight){
                     boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + KNIGHT_PIECE_NOTATION;
                 }
+                // Promotion to Rook
                 if(move.specialCondition == SpecialConditions.PromoteToRook){
                     boardState[move.targetCoord] = "" + WHITE_PIECE_NOTATION + ROOK_PIECE_NOTATION;
                 }
             }
+            // Promotion of black pawns
             if(boardState.turn == ChessState.BLACK){
+                // Promotion to Queen
                 if(move.specialCondition == SpecialConditions.PromoteToQueen){
                     boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + QUEEN_PIECE_NOTATION;
                 }
+                // Promotion to Bishop
                 if(move.specialCondition == SpecialConditions.PromoteToBishop){
                     boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + BISHOP_PIECE_NOTATION;
                 }
+                // Promotion to Knight
                 if(move.specialCondition == SpecialConditions.PromoteToKnight){
                     boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + KNIGHT_PIECE_NOTATION;
                 }
+                // Promotion to Rook
                 if(move.specialCondition == SpecialConditions.PromoteToRook){
                     boardState[move.targetCoord] = "" + BLACK_PIECE_NOTATION + ROOK_PIECE_NOTATION;
                 }

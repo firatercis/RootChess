@@ -126,70 +126,101 @@ namespace SoftwareKingdom.Chess.UI
         public void MakeMove(Move move)
         {
             Vector3 position = GetPiecePosition(move.targetCoord);
+
+            // If not planting seeds
             if( !SeedPlantingMoveGenerator.IsSeedPlantingMove(move))
             {
                 pieceLiner.MovePiece(move.startCoord, move.targetCoord, position);
 
+                // Handles the UI of the en passant move
                 if(move.specialCondition == SpecialConditions.EnPassantCapture)
                 {
                     Coord enPassantCoord = new Coord(move.startCoord.rankIndex, move.targetCoord.fileIndex);
+                    // Clears the captured pawn by en passant
                     pieceLiner.CheckClearSquare(enPassantCoord);
                 }
                
 
+                // Handles the UI of the castling
+                 
+                // White king side castling
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
                     pieceLiner.MovePiece(new Coord(0,7), new Coord(0,5), position + new Vector3(-1,0,0));
                 }
+                // White queen side castling
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
                     pieceLiner.MovePiece(new Coord(0,0), new Coord(0,3), position + new Vector3(+1,0,0));
                 }
+                // Black king side castling
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,6)){
                     pieceLiner.MovePiece(new Coord(7,7), new Coord(7,5), position + new Vector3(-1,0,0));
                 }
+                // Blask queen side castling
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
                     pieceLiner.MovePiece(new Coord(7,0), new Coord(7,3), position + new Vector3(+1,0,0));
                 }
 
+                // Checks if a pawn promotes
+                // Handles the UI of the promotion
+
+                // White promotion
                 if(move.targetCoord.rankIndex == 7){
                     string whitePieceNotation = "W";
+
+                    // Promotion to Queen
                     if(move.specialCondition == SpecialConditions.PromoteToQueen){
-                        pieceLiner.CheckClearSquare(move.targetCoord);
-                        string pieceNotation = whitePieceNotation + 'Q';
-                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
+                        pieceLiner.CheckClearSquare(move.targetCoord); // clears the square which pawn arrived and promoted
+                        string pieceNotation = whitePieceNotation + 'Q'; // creates a new queen
+                        pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord); // Places the created queen on the promotion square
                     }
+
+                    // Promotion to Knight
                     if(move.specialCondition == SpecialConditions.PromoteToKnight){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = whitePieceNotation + 'N';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
+
+                    // Promotion to Bishop
                     if(move.specialCondition == SpecialConditions.PromoteToBishop){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = whitePieceNotation + 'B';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
+
+                    // Promotion to Rook
                     if(move.specialCondition == SpecialConditions.PromoteToRook){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = whitePieceNotation + 'R';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
                 }
+                // Black promotion
                 if(move.targetCoord.rankIndex == 0){
                     string blackPieceNotation = "B";
+
+                    // Promotion to Queen
                     if(move.specialCondition == SpecialConditions.PromoteToQueen){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = blackPieceNotation + 'Q';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
+
+                    // Promotion to Knight
                     if(move.specialCondition == SpecialConditions.PromoteToKnight){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = blackPieceNotation + 'N';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
+
+                    // Promotion to Bishop
                     if(move.specialCondition == SpecialConditions.PromoteToBishop){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = blackPieceNotation + 'B';
                         pieceLiner.DrawPiece(pieceNotation, position, move.targetCoord);
                     }
+
+                    // Promotion to Rook
                     if(move.specialCondition == SpecialConditions.PromoteToRook){
                         pieceLiner.CheckClearSquare(move.targetCoord);
                         string pieceNotation = blackPieceNotation + 'R';
@@ -198,6 +229,8 @@ namespace SoftwareKingdom.Chess.UI
                 }
 
             }
+
+            // If planting seeds
             else
             {
                 ChessState boardState = logic.GetState();

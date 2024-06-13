@@ -74,6 +74,7 @@ namespace SoftwareKingdom.Chess.Core
         }
 
         
+        // Generates possible castling moves
         public Move[] GenerateCastlingMoves(ChessState boardState, Coord sourceCoord)
         {
             string ownPiece = boardState[sourceCoord];
@@ -81,29 +82,36 @@ namespace SoftwareKingdom.Chess.Core
             Coord kingSideMoveDirection =  new Coord(0, +1);
             Coord queenSideMoveDirection =  new Coord(0, -1);
            
-
+            // Returns an empty array if it not the players turn
             if (!boardState.IsInTurn(ownPiece))
             {
                 return result.ToArray();
             }
 
 
-            string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0";
-            string queenSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0-0";
+            string kingSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0"; // King side castle notation
+            string queenSideCastleFlag = boardState.GetTurnPrefix() + CASTLE_NOTATION + "0-0-0"; // Queen side castle notation
 
+            // Only the king  is moved here (Rook is moved in the BaseChessLogic class, ApplyCastling function)
+
+            // Checks the white player's king side castle move
             if(boardState.flags.Contains("WC0-0")){
-                if(sourceCoord == new Coord(0,4)){
-                    if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection)){
+                 // Checks if the white king is moving
+                if(sourceCoord == new Coord(0,4)){ 
+                    // Checks the square of castling
+                    if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection)){  
+                        // Checks the square of castling
                         if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection + kingSideMoveDirection))
                         {
-                            Move kingSideCastleKingMoveWhite = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection);
-                            kingSideCastleKingMoveWhite.specialCondition = SpecialConditions.Castling;
-                            result.Add(kingSideCastleKingMoveWhite);
+                            Move kingSideCastleKingMoveWhite = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection); // Creates the castling move for the king
+                            kingSideCastleKingMoveWhite.specialCondition = SpecialConditions.Castling; // sets the special condition of the move to castling
+                            result.Add(kingSideCastleKingMoveWhite); // adds the move to moves array
                         }
                     }
                 }
                 
             }
+            // Checks the black player's king side castle move
             if(boardState.flags.Contains("BC0-0")){
                 if(sourceCoord == new Coord(7,4)){
                     if(boardState.IsEmpty(sourceCoord + kingSideMoveDirection)){
@@ -111,14 +119,12 @@ namespace SoftwareKingdom.Chess.Core
                         {
                             Move kingSideCastleKingMoveBlack = new Move(sourceCoord, sourceCoord + kingSideMoveDirection + kingSideMoveDirection);
                             kingSideCastleKingMoveBlack.specialCondition = SpecialConditions.Castling;
-
                             result.Add(kingSideCastleKingMoveBlack);
                         }
                     }
                 }
             }
-          
-
+            // Checks the white player's queen side castle move
             if(boardState.flags.Contains("WC0-0-0")){
                 if(sourceCoord == new Coord(0,4)){
                     if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection)){
@@ -133,7 +139,7 @@ namespace SoftwareKingdom.Chess.Core
                     }
                 }
             }
-
+            // Checks the black player's queen side castle move
             if(boardState.flags.Contains("BC0-0-0")){
                 if(sourceCoord == new Coord(7,4)){
                     if(boardState.IsEmpty(sourceCoord + queenSideMoveDirection)){
@@ -142,7 +148,6 @@ namespace SoftwareKingdom.Chess.Core
                             {
                                 Move queenSideCastleKingMoveBlack = new Move(sourceCoord, sourceCoord + queenSideMoveDirection + queenSideMoveDirection);
                                 queenSideCastleKingMoveBlack.specialCondition = SpecialConditions.Castling;
-
                                 result.Add(queenSideCastleKingMoveBlack);
                             }
                         }
