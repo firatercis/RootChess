@@ -1,7 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Globalization;
-using System.Security.Cryptography;
-using System.Net.Sockets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,10 +13,8 @@ namespace SoftwareKingdom.Chess.Core
     {
         const string VARIANT_NAME = "Standard";
 
-
         const char BLACK_PIECE_NOTATION = 'B';
         const char WHITE_PIECE_NOTATION = 'W';
-
         const char BISHOP_PIECE_NOTATION = 'B';
         const char QUEEN_PIECE_NOTATION = 'Q';
         const char ROOK_PIECE_NOTATION = 'R';
@@ -124,7 +118,9 @@ namespace SoftwareKingdom.Chess.Core
 
         public override List<Move> GenerateMoves(ChessState boardState, Coord sourceCoord, bool checkLegal = true) {
             List<Move> result = new List<Move>();
+
             char currentPiece = boardState.GetPieceNotation(sourceCoord);
+
 
             if(currentPiece != EMPTY_NOTATION && boardState.IsInTurn(boardState[sourceCoord]))
             {
@@ -134,14 +130,39 @@ namespace SoftwareKingdom.Chess.Core
 
             // Filter non-legal moves if check legal is selected.
 
+            
+
+            result = checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result; 
         
-        
-            return checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result; 
+            return result;
+
         }
+
+        // This function generates all possible moves for the opponent on the current board
+        public List<Move> GenerateMovesForOpponent(ChessState boardState, Coord sourceCoord, bool checkLegal = true) {
+            List<Move> result = new List<Move>();
+
+            char currentPiece = boardState.GetPieceNotation(sourceCoord);
+
+
+            if(currentPiece != EMPTY_NOTATION && !boardState.IsInTurn(boardState[sourceCoord]))
+            {
+                Move[] possibleMovesForPiece = pieceMoveGeneratorsDict[currentPiece].GenerateMoves(boardState, sourceCoord);
+                result.AddRange(possibleMovesForPiece);
+            }
+
+            // Filter non-legal moves if check legal is selected.
+
+            result = checkLegal ? result.Where(x => IsLegal(x, boardState)).ToList() : result; 
+        
+            return result;
+        }
+
 
         public virtual bool IsLegal(Move move, ChessState boardState) {
             ChessState nextBoardState = GenerateMoveSuccessor(boardState, move);
             List<Move> opponentMoves = GenerateBoardMoves(nextBoardState, checkLegal: false);
+
 
             bool result = true;
             for (int i = 0; i < opponentMoves.Count; i++)
@@ -170,6 +191,10 @@ namespace SoftwareKingdom.Chess.Core
                     result = false;
                     break;
                 }
+               
+               
+                
+                
             }
             return result;
         }
@@ -199,11 +224,48 @@ namespace SoftwareKingdom.Chess.Core
 
             // Apply the promotion
             CheckApplyPromotion(boardState, move);
+
+            // CheckMate(boardState, move);
            
 
             SwitchTurn(boardState);
-
         }
+
+        public override void CheckGameEnd(ChessState boardState){
+            List<Move> moves = GenerateBoardMoves(boardState, true);
+            List<Move> oppoenentMoves = GenerateBoardMovesForOpponent(boardState, true);
+
+            //Debug.Log(moves.Count);
+            //Debug.Log(oppoenentMoves.Count);
+            //Debug.Log(boardState.GetTurnPrefix());
+
+            bool isCheck = false;
+
+            for(int i = 0; i<oppoenentMoves.Count; i++){
+                if((boardState.GetPieceNotation(oppoenentMoves[i].targetCoord) == KING_PIECE_NOTATION)){
+                    isCheck = true;
+                }
+            }
+
+            if(isCheck && moves.Count == 0){
+                Debug.Log("Checkmate!, winner: " + (1-boardState.turn));
+            }
+            else if(!isCheck && moves.Count == 0){
+                Debug.Log("Tie! ");
+
+            }
+        }
+
+        /*
+        private static void CheckMate(ChessState boardState, Move move){
+            if(boardState.turn == 0){
+                Coord kingCoord = new Coord(boardState.Search("K"));
+                List<Move> possibleMoves = GenerateMoves(boardState, kingCoord);
+                if(possibleMoves == null)
+                    DebugDirectoryBuilder.Log("Black won");
+            }
+        }
+        */
 
         // Enables En Passant move if the move is playebla
         private static void SaveEnPassantCoord(ChessState boardState, Move move) {
@@ -240,53 +302,67 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
+        // Updates castling flags
         private void CheckUpdateCastling(ChessState boardState, Move move){
-
+            
+            // White player castle flags
             if(boardState.turn == ChessState.WHITE){
+                // Removes white castle flags from the array when white king moves
                 if(move.startCoord == new Coord(0,4)){
                     boardState.flags.Remove("WC0-0");
                     boardState.flags.Remove("WC0-0-0");
                 }
+                // Removes white king side castle flag from the array when white right rook moves
                 if(move.startCoord == new Coord(0,7)){
                     boardState.flags.Remove("WC0-0");
                 }
+                // Removes white queen side castle flag from the array when white left rook moves
                 if(move.startCoord == new Coord(0,0)){
                     boardState.flags.Remove("WC0-0-0");
                 }
                 
             } 
-
+            // Black player castle flags
             if(boardState.turn == ChessState.BLACK){
+                // Removes black castle flags from the array when black king moves
                 if(move.startCoord == new Coord(7,4)){
                     boardState.flags.Remove("BC0-0");
                     boardState.flags.Remove("BC0-0-0");
                 }
+                // Removes black king side castle flag from the array when white black rook moves
                 if(move.startCoord == new Coord(7,7)){
                     boardState.flags.Remove("BC0-0");
                 }
+                // Removes black queen side castle flag from the array when black left rook moves
                 if(move.startCoord == new Coord(7,0)){
                     boardState.flags.Remove("BC0-0-0");
                 }
             }
         }
 
+        // Applies the castling move to the rooks (King is moved in the KingMoveGenerator class, GenerateCastlingMoves function)
         static void ApplyCastling(ChessState boardState, Move move){
+            // Applies white player's castle moves
             if(boardState.turn == ChessState.WHITE){
+                // Plays the white king side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,6)){
-                    boardState[0,5] = boardState[0,7];
-                    boardState[0,7] = ChessState.EMPTY_SQUARE;
+                    boardState[0,5] = boardState[0,7]; // Moves the rook
+                    boardState[0,7] = ChessState.EMPTY_SQUARE; // Empties the rook's previous position
                 }
-                
+                // Plays the white queen side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
                     boardState[0,0] = boardState[0,3];
                     boardState[0,0] = ChessState.EMPTY_SQUARE;
                 }
             }
+            // Applies black player's castle moves
             if(boardState.turn == ChessState.BLACK){
+                // Plays the black king side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,6)){
                     boardState[7,5] = boardState[7,7];
                     boardState[7,7] = ChessState.EMPTY_SQUARE;
                 }
+                // Plays the black queen side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
                     boardState[7,0] = boardState[7,3];
                     boardState[7,0] = ChessState.EMPTY_SQUARE;
@@ -341,6 +417,7 @@ namespace SoftwareKingdom.Chess.Core
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual
             return GenerateBoardMoves(boardState, checkLegal: true);
         }
+
         protected virtual List<Move> GenerateBoardMoves(ChessState boardState, bool checkLegal) {
             List<Move> pseudoLegalMoves = new List<Move>();
             for (int i = 0; i < boardState.board.GetLength(0); i++)
@@ -354,8 +431,37 @@ namespace SoftwareKingdom.Chess.Core
                    
                 }
             }
-            List<Move> legalMoves = checkLegal ? pseudoLegalMoves.Where(x => IsLegal(x, boardState)).ToList() : pseudoLegalMoves;
+            List<Move> legalMoves = new List<Move>();
+            legalMoves = checkLegal ? pseudoLegalMoves.Where(x => IsLegal(x, boardState)).ToList() : pseudoLegalMoves;
+           
+            //Debug.Log("checkLegal:" + checkLegal);
+            //Debug.Log(legalMoves.Count);
+            //Debug.Log("Turn: " + boardState.turn);
+            
+            return legalMoves;
+        }
 
+        // This function generates all possible moves for the opponent on the current board       
+        protected virtual List<Move> GenerateBoardMovesForOpponent(ChessState boardState, bool checkLegal) {
+            List<Move> pseudoLegalMoves = new List<Move>();
+            for (int i = 0; i < boardState.board.GetLength(0); i++)
+            {
+                for (int j = 0; j < boardState.board.GetLength(1); j++)
+                {
+                    if (boardState.IsEmpty(i, j) || boardState.IsInTurn(boardState[i, j])) continue;
+
+                    pseudoLegalMoves.AddRange(GenerateMovesForOpponent(boardState, new Coord(i,j),checkLegal));
+
+                   
+                }
+            }
+            List<Move> legalMoves = new List<Move>();
+            legalMoves = checkLegal ? pseudoLegalMoves.Where(x => IsLegal(x, boardState)).ToList() : pseudoLegalMoves;
+           
+            //Debug.Log("checkLegal:" + checkLegal);
+            //Debug.Log(legalMoves.Count);
+            //Debug.Log("Turn: " + boardState.turn);
+            
             return legalMoves;
         }
 

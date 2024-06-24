@@ -16,13 +16,18 @@ namespace SoftwareKingdom.Chess
         // Events
         public event Action<Move> OnMovePlayed;
         public event Action<int> OnTurn;
+        public event Action<int> OnGameEnd;
+
         // State variables
 
         protected ChessState currentState;
         
         public void PlayMove(ChessState inputState, Move move) {
+
             ApplyMove(inputState, move);
             
+            CheckGameEnd(inputState);
+
             OnMovePlayed?.Invoke(move);
             OnTurn?.Invoke(inputState.turn);
         }
@@ -36,6 +41,9 @@ namespace SoftwareKingdom.Chess
         public abstract List<Move> GenerateBoardMoves(ChessState boardState);
 
         public abstract List<Move> GenerateMoves(ChessState boardState, Coord sourceCoord,bool checkLegal = true);
+
+        public abstract void CheckGameEnd(ChessState boardState);
+
 
         // For simplicity, use current state as default input
         public List<Move> GenerateBoardMoves() {
