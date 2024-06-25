@@ -16,7 +16,6 @@ namespace SoftwareKingdom.Chess
         // Events
         public event Action<Move> OnMovePlayed;
         public event Action<int> OnTurn;
-        public event Action<int> OnGameEnd;
 
         // State variables
 
