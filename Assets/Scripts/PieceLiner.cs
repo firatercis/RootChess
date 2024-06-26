@@ -12,7 +12,8 @@ namespace SoftwareKingdom.Chess.UI {
     {
 
         // Settings
-
+        public bool doJumpAnimation = true;
+        public float jumpTime = 0.5f;
         // Connections
 
         public PieceSet pieceSet; // TODO: Scriptable object
@@ -108,7 +109,14 @@ namespace SoftwareKingdom.Chess.UI {
             CheckClearSquare(targetCoord);
 
             coordPieceDictionary.Add(targetCoord, piece);
-            piece.transform.DOJump(absolutePosition, 1.0f, 1, 0.5f); // TODO: Magic Number, and piece can move itself
+            if (doJumpAnimation)
+            {
+                piece.transform.DOJump(absolutePosition, 1, 1, jumpTime); // TODO: Magic Number, and piece can move itself
+            }
+            else
+            {
+                piece.transform.position = absolutePosition;
+            }
         }
 
         public void CheckClearSquare(Coord targetCoord) {

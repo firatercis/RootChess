@@ -1,34 +1,45 @@
 using SoftwareKingdom.Chess.Core;
 using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 
-namespace SoftwareKingdom.Chess
+
+namespace SoftwareKingdom.Chess.Core
 {
 
+    public struct GameResult {
+        public int winningIndex; //0: Tie, 1: White -1: Black 
+        public GameResult(int winningIndex) {
+            this.winningIndex = winningIndex;   
+        }
+    }
 
 
     public abstract class ChessLogic : ScriptableObject, IChessLogic
     {
         // Events
-        public event Action<Move> OnMovePlayed;
-        public event Action<int> OnTurn;
+        public  Action<Move> OnMovePlayed;
+        public  Action<int> OnTurn;
+        public  Action<GameResult> OnGameEnd;
 
         // State variables
-
+        public bool gameEnd;
         protected ChessState currentState;
         
         public void PlayMove(ChessState inputState, Move move) {
 
             ApplyMove(inputState, move);
             
-            CheckGameEnd(inputState);
+           
 
             OnMovePlayed?.Invoke(move);
-            OnTurn?.Invoke(inputState.turn);
+            if(!gameEnd)
+            {
+                CheckGameEnd(inputState);
+                OnTurn?.Invoke(inputState.turn);
+            }
         }
 
         public ChessState GetState() {
@@ -58,6 +69,7 @@ namespace SoftwareKingdom.Chess
         }
 
         public virtual void StartGame() {
+            gameEnd = false;
             OnTurn?.Invoke(currentState.turn);
         }
 

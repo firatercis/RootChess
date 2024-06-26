@@ -27,6 +27,7 @@ namespace SoftwareKingdom.Chess.UI
         public ChessLogic logic; 
         public Transform startPoint;
         public BoardSquare[] squaresPool;
+        public GameResultPanel resultPanel;
         Dictionary<Coord, BoardSquare> coordSquareDictionary;
    
         PieceLiner pieceLiner;
@@ -54,8 +55,8 @@ namespace SoftwareKingdom.Chess.UI
         {
             coordSquareDictionary = new Dictionary<Coord, BoardSquare>();// TODO: Is this a good approach?
             pieceLiner = GetComponent<PieceLiner>();
-            logic.OnMovePlayed += MakeMove;
-            logic.OnTurn += OnTurn;
+            logic.OnMovePlayed = MakeMove;
+            logic.OnTurn = OnTurn;
         }
 
         private void OnTurn(int turnIndex) {
@@ -69,9 +70,26 @@ namespace SoftwareKingdom.Chess.UI
 
             }
         }
-       
 
-        
+        public void OnGameEnd(GameResult result) {
+            // TODO: Add UI
+            if (result.winningIndex == 0)
+            {
+                Debug.Log("Tie");
+            }
+
+            if (result.winningIndex == 1)
+            {
+                Debug.Log("White wins");
+            }
+
+            if (result.winningIndex == -1)
+            {
+                Debug.Log("Black wins");
+            }
+            resultPanel.ShowGameResult(result);
+        }
+
         void InitState()
         {
             logic.CreateGame();

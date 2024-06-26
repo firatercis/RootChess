@@ -64,6 +64,9 @@ namespace SoftwareKingdom.Chess.Core
         }
 
         public override ChessState CreateGame() {
+
+
+
             currentState = CreateStandardInitialState();
             return currentState;
         }
@@ -255,11 +258,20 @@ namespace SoftwareKingdom.Chess.Core
 
             if(isCheck && moves.Count == 0){
                 Debug.Log("Checkmate!, winner: " + (1-boardState.turn));
+                int winningIndex = 1;
+                if(boardState.turn == 0)
+                {
+                    winningIndex = -1;
+                }
+                OnGameEnd(new GameResult(winningIndex));
+                gameEnd = true;
             }
 
             
             else if(!isCheck && moves.Count == 0){
                 Debug.Log("Tie! ");
+                OnGameEnd(new GameResult(0));
+                gameEnd = true;
             }
            
             int k = 0; 
@@ -268,13 +280,15 @@ namespace SoftwareKingdom.Chess.Core
                 for (int j = 0; j < boardState.board.GetLength(1); j++)
                 {
                     if (boardState.IsEmpty(i, j)) continue;
-                    Debug.Log(boardState.board[i,j]);
+                   // Debug.Log(boardState.board[i,j]);
                     k++;
                 }
             }
             if(k==2){
                 Debug.Log("tie");
-                Time.timeScale = 0;      
+                OnGameEnd(new GameResult(0));
+                gameEnd = true;
+                // Time.timeScale = 0;      
             }
             
         }

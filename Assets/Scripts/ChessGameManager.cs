@@ -5,6 +5,7 @@ using SoftwareKingdom.Chess.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //using DG.Tweening;
 
 
@@ -43,14 +44,24 @@ public class ChessGameManager : MonoBehaviour
             players[i].Configure(logic);
         }
         logic.OnMovePlayed += OnMovePlayed;
+        logic.OnGameEnd += OnGameEnd;
+    }
 
+
+    void OnGameEnd(GameResult gameResult) {
+        uiManager.OnGameEnd(gameResult);
+        Invoke(nameof(RestartGame), 5.0f);
+    }
+
+    void RestartGame() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void InitState(){
         currentBoardState = logic.CreateGame();
         uiManager.CreateBoard(currentBoardState); // TODO: For only test
         seedSelectionPanel.SetSeedsDisplay(new string[] { "P", "N", "B", "R", "Q" }); // TODO: Get Available seeds 
-        Invoke("OnTurn", 1f);
+        Invoke(nameof(OnTurn), 1f);
     }
 
     void OnTurn() {
@@ -73,7 +84,9 @@ public class ChessGameManager : MonoBehaviour
     public void OnMovePlayed(Move move)
     {
         //uiManager.MakeMove(move, currentBoardState);
-        Invoke("OnTurn", 0.05f);
+        if(!logic.gameEnd)
+            Invoke(nameof(OnTurn), 0.05f);
     }
    
+
 }
