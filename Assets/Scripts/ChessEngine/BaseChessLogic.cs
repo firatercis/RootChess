@@ -1,8 +1,11 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 
 namespace SoftwareKingdom.Chess.Core
@@ -20,6 +23,8 @@ namespace SoftwareKingdom.Chess.Core
         const char ROOK_PIECE_NOTATION = 'R';
         const char KING_PIECE_NOTATION = 'K';
         const char KNIGHT_PIECE_NOTATION = 'N';
+        const char PAWN_PIECE_NOTATION = 'P';
+
 
         public const char EMPTY_NOTATION = '\0';
 
@@ -226,11 +231,12 @@ namespace SoftwareKingdom.Chess.Core
             CheckApplyPromotion(boardState, move);
 
             // CheckMate(boardState, move);
-           
-
+            
             SwitchTurn(boardState);
+
         }
 
+    
         public override void CheckGameEnd(ChessState boardState){
             List<Move> moves = GenerateBoardMoves(boardState, true);
             List<Move> oppoenentMoves = GenerateBoardMovesForOpponent(boardState, true);
@@ -250,10 +256,27 @@ namespace SoftwareKingdom.Chess.Core
             if(isCheck && moves.Count == 0){
                 Debug.Log("Checkmate!, winner: " + (1-boardState.turn));
             }
+
+            
             else if(!isCheck && moves.Count == 0){
                 Debug.Log("Tie! ");
-
             }
+           
+            int k = 0; 
+            for(int i = 0; i < boardState.board.GetLength(0); i++)
+            {
+                for (int j = 0; j < boardState.board.GetLength(1); j++)
+                {
+                    if (boardState.IsEmpty(i, j)) continue;
+                    Debug.Log(boardState.board[i,j]);
+                    k++;
+                }
+            }
+            if(k==2){
+                Debug.Log("tie");
+                Time.timeScale = 0;      
+            }
+            
         }
 
         /*
@@ -413,7 +436,7 @@ namespace SoftwareKingdom.Chess.Core
             }
         }
 
-
+        
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual
             return GenerateBoardMoves(boardState, checkLegal: true);
         }

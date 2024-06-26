@@ -5,6 +5,8 @@ using SoftwareKingdom.Chess.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using DG.Tweening;
+
 
 
 public class ChessGameManager : MonoBehaviour
@@ -25,6 +27,8 @@ public class ChessGameManager : MonoBehaviour
     ChessState currentBoardState;
     void Awake(){
         InitConnections();
+        //DOTween.SetTweensCapacity(3000, 1500); // İlk parametre aktif tweens, ikinci parametre sıralı tweens sayısını belirler
+
     }
 
     void Start()
@@ -46,12 +50,13 @@ public class ChessGameManager : MonoBehaviour
         currentBoardState = logic.CreateGame();
         uiManager.CreateBoard(currentBoardState); // TODO: For only test
         seedSelectionPanel.SetSeedsDisplay(new string[] { "P", "N", "B", "R", "Q" }); // TODO: Get Available seeds 
-        OnTurn();
+        Invoke("OnTurn", 1f);
     }
 
     void OnTurn() {
         players[currentBoardState.turn].OnTurn(currentBoardState);
     }
+    
 
 
     // Update is called once per frame
@@ -67,8 +72,8 @@ public class ChessGameManager : MonoBehaviour
 
     public void OnMovePlayed(Move move)
     {
-      //  uiManager.MakeMove(move, currentBoardState);
-        OnTurn();
+        //uiManager.MakeMove(move, currentBoardState);
+        Invoke("OnTurn", 0.05f);
     }
    
 }

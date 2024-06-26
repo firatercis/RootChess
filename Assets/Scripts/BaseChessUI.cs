@@ -1,3 +1,4 @@
+using System.Collections;
 using SoftwareKingdom.Chess.Core;
 using SoftwareKingdom.Chess.RootChess;
 using System.Linq;
@@ -44,6 +45,9 @@ namespace SoftwareKingdom.Chess.UI
         void Start()
         {
             InitState();
+    
+            
+    
         }
 
         void InitConnections()
@@ -62,9 +66,12 @@ namespace SoftwareKingdom.Chess.UI
             else
             {
                 players[turnIndex].OnTurn(logic.GetState());
+
             }
         }
+       
 
+        
         void InitState()
         {
             logic.CreateGame();
