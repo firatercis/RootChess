@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 217b9548b83664400b9183031eeba8d1, type: 3}
-  m_Name: AIPlayer2
+  m_Script: {fileID: 11500000, guid: 268aafa2e4fa148debbdeae465d3cb5d, type: 3}
+  m_Name: AIPlayer1
   m_EditorClassIdentifier: 
   gameLogic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}

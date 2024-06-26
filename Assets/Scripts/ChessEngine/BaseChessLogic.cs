@@ -209,7 +209,7 @@ namespace SoftwareKingdom.Chess.Core
 
      
 
-        public virtual ChessState GenerateMoveSuccessor(ChessState inputState, Move move) {
+        public override ChessState GenerateMoveSuccessor(ChessState inputState, Move move) {
             ChessState outputState = new ChessState(inputState);
             ApplyMove( outputState, move);
             return outputState;
@@ -257,7 +257,7 @@ namespace SoftwareKingdom.Chess.Core
             }
 
             if(isCheck && moves.Count == 0){
-                Debug.Log("Checkmate!, winner: " + (1-boardState.turn));
+                //Debug.Log("Checkmate!, winner: " + (1-boardState.turn));
                 int winningIndex = 1;
                 if(boardState.turn == 0)
                 {
@@ -269,7 +269,7 @@ namespace SoftwareKingdom.Chess.Core
 
             
             else if(!isCheck && moves.Count == 0){
-                Debug.Log("Tie! ");
+                //Debug.Log("Tie! ");
                 OnGameEnd(new GameResult(0));
                 gameEnd = true;
             }
@@ -285,7 +285,7 @@ namespace SoftwareKingdom.Chess.Core
                 }
             }
             if(k==2){
-                Debug.Log("tie");
+                //Debug.Log("tie");
                 OnGameEnd(new GameResult(0));
                 gameEnd = true;
                 // Time.timeScale = 0;      

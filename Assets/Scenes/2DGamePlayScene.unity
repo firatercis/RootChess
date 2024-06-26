@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -14271,7 +14271,7 @@ MonoBehaviour:
   logic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}
   players:
   - {fileID: 11400000, guid: 092395cad11af47e2945ddca6c3baf57, type: 2}
-  - {fileID: 11400000, guid: fa977be8566f94e7fac1dc4bb9c5cb82, type: 2}
+  - {fileID: 11400000, guid: aea116ffd2236418a9069d7d18efa093, type: 2}
   uiManager: {fileID: 1795393288}
   seedSelectionPanel: {fileID: 1664844688}
 --- !u!114 &1918221803 stripped

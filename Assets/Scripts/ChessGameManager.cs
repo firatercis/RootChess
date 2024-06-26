@@ -50,7 +50,7 @@ public class ChessGameManager : MonoBehaviour
 
     void OnGameEnd(GameResult gameResult) {
         uiManager.OnGameEnd(gameResult);
-        Invoke(nameof(RestartGame), 5.0f);
+        //Invoke(nameof(RestartGame), 5.0f);
     }
 
     void RestartGame() {
@@ -85,7 +85,7 @@ public class ChessGameManager : MonoBehaviour
     {
         //uiManager.MakeMove(move, currentBoardState);
         if(!logic.gameEnd)
-            Invoke(nameof(OnTurn), 0.05f);
+            Invoke(nameof(OnTurn), 0.1f);
     }
    
 

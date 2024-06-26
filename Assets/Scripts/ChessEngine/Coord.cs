@@ -6,7 +6,12 @@
         public int fileIndex;
 
 
-
+        public int GetRankIndex(){
+            return rankIndex;
+        }
+        public int GetFileIndex(){
+            return fileIndex;
+        }
         public Coord(int i, int j)
         {
             this.rankIndex = i;
