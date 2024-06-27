@@ -12119,7 +12119,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.084437504, y: 0.028777778}
   m_AnchorMax: {x: 0.6924375, y: 0.24637042}
-  m_AnchoredPosition: {x: 3, y: -4.5002747}
+  m_AnchoredPosition: {x: 3, y: -4.5003967}
   m_SizeDelta: {x: -5.049988, y: -9.979797}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1664844685
@@ -14270,7 +14270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}
   players:
-  - {fileID: 11400000, guid: 092395cad11af47e2945ddca6c3baf57, type: 2}
+  - {fileID: 11400000, guid: 32318eed949fb4336a4c3109a2ab9bbb, type: 2}
   - {fileID: 11400000, guid: aea116ffd2236418a9069d7d18efa093, type: 2}
   uiManager: {fileID: 1795393288}
   seedSelectionPanel: {fileID: 1664844688}
