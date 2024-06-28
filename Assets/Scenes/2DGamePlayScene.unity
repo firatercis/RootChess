@@ -14270,8 +14270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}
   players:
-  - {fileID: 11400000, guid: 32318eed949fb4336a4c3109a2ab9bbb, type: 2}
   - {fileID: 11400000, guid: aea116ffd2236418a9069d7d18efa093, type: 2}
+  - {fileID: 11400000, guid: 092395cad11af47e2945ddca6c3baf57, type: 2}
   uiManager: {fileID: 1795393288}
   seedSelectionPanel: {fileID: 1664844688}
 --- !u!114 &1918221803 stripped

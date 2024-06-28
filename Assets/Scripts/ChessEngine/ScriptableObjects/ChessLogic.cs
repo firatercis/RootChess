@@ -49,6 +49,9 @@ namespace SoftwareKingdom.Chess.Core
         public abstract void ApplyMove(ChessState boardState, Move move);
 
         public abstract List<Move> GenerateBoardMoves(ChessState boardState);
+
+        public abstract List<Move> GenerateBoardMovesForOpponent(ChessState boardState);
+
         public abstract ChessState GenerateMoveSuccessor(ChessState inputState, Move move);
 
 

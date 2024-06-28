@@ -239,7 +239,7 @@ namespace SoftwareKingdom.Chess.Core
 
         }
 
-    
+        
         public override void CheckGameEnd(ChessState boardState){
             List<Move> moves = GenerateBoardMoves(boardState, true);
             List<Move> oppoenentMoves = GenerateBoardMovesForOpponent(boardState, true);
@@ -453,6 +453,9 @@ namespace SoftwareKingdom.Chess.Core
         
         public  override List<Move> GenerateBoardMoves(ChessState boardState) { // TODO: Can be virtual
             return GenerateBoardMoves(boardState, checkLegal: true);
+        }
+        public override List<Move> GenerateBoardMovesForOpponent(ChessState boardState) { // TODO: Can be virtual
+            return GenerateBoardMovesForOpponent(boardState, checkLegal: false);
         }
 
         protected virtual List<Move> GenerateBoardMoves(ChessState boardState, bool checkLegal) {
