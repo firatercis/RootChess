@@ -9,7 +9,7 @@ using UnityEngine;
 namespace SoftwareKingdom.Chess.UI
 {
 
-    [CreateAssetMenu(fileName = "AIPlayer1", menuName = "SoftwareKingdom/Chess/AIPlayer1", order = 2)]
+    [CreateAssetMenu(fileName = "AIPlayer1", menuName = "SoftwareKingdom/Chess/AIPlayer1", order = 1)]
 
     public class AIPlayer1 : ChessPlayer {
 
@@ -282,7 +282,7 @@ namespace SoftwareKingdom.Chess.UI
                             //Debug.Log(l);
                             //Debug.Log("işl22");
 
-                            if(!(state.IsEmpty(moves[f].targetCoord)) && moves[f].targetCoord.rankIndex == k && moves[f].targetCoord.fileIndex == l){
+                            if((!state.IsEmpty(moves[f].targetCoord)) && moves[f].targetCoord.rankIndex == k && moves[f].targetCoord.fileIndex == l){
                                 currentBest +=2.5;
                             }
                             //List<Move> movesOwn = gameLogic.GenerateBoardMoves(state);
@@ -317,12 +317,10 @@ namespace SoftwareKingdom.Chess.UI
                 double possibleKingCheck = 0;
 
                 for(int z = 0; z < movesOpponentKing.Count; z++){
-                        if(moves[f].targetCoord == movesOpponentKing[z].targetCoord){
-                            
+                        if(moves[f].targetCoord == movesOpponentKing[z].targetCoord){   
                                 possibleKingCheck += 0.8;
-
-
                         }
+                     
                     
                 }
             currentBest += possibleKingCheck;

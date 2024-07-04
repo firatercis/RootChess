@@ -8,7 +8,7 @@ using UnityEngine;
 namespace SoftwareKingdom.Chess.UI
 {
 
-    [CreateAssetMenu(fileName = "AIPlayer", menuName = "SoftwareKingdom/Chess/AIPlayer", order = 2)]
+    [CreateAssetMenu(fileName = "AIPlayer", menuName = "SoftwareKingdom/Chess/AIPlayer", order = 0)]
 
     public class AIPlayer : ChessPlayer 
     {
@@ -26,6 +26,7 @@ namespace SoftwareKingdom.Chess.UI
         }
 
         public override void OnTurn(ChessState state) {
+            
             
             List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
             //Move move = possibleMoves[0];
