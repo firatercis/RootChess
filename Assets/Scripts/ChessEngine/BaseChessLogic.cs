@@ -388,7 +388,7 @@ namespace SoftwareKingdom.Chess.Core
                 }
                 // Plays the white queen side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(0,2)){
-                    boardState[0,0] = boardState[0,3];
+                    boardState[0,3] = boardState[0,0];
                     boardState[0,0] = ChessState.EMPTY_SQUARE;
                 }
             }
@@ -401,7 +401,7 @@ namespace SoftwareKingdom.Chess.Core
                 }
                 // Plays the black queen side castle move
                 if(move.specialCondition == SpecialConditions.Castling && move.targetCoord == new Coord(7,2)){
-                    boardState[7,0] = boardState[7,3];
+                    boardState[7,3] = boardState[7,0];
                     boardState[7,0] = ChessState.EMPTY_SQUARE;
                 }
             }

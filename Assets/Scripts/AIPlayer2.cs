@@ -18,6 +18,8 @@ namespace SoftwareKingdom.Chess.UI
         // Connections
         public ChessLogic gameLogic;
         ChessState currentChessState;
+        int kame = 0;
+
     
         public override bool IsHuman() { return false; }
 
@@ -26,20 +28,28 @@ namespace SoftwareKingdom.Chess.UI
         }
 
         public override void OnTurn(ChessState state) {
-            
+            kame = 0;
+
             gameLogic.PlayMove(state, GetBestMoveOfAll(state));
+            Debug.Log(kame);
         }
         
         private double EvaluateBoard(ChessState state){
-            double point = GetBoardPieceStatus(state);
+            double point = 0;
+            point += GetBoardPieceStatus(state);
+            point += GetIfCenter(state);
+            point += EvaluateCheckForMove(state);
+            point += EvaluatePossibleCheckForMove(state);
             return point;
         }
 
         private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer){
+            //Debug.Log("Depth = " + depth);
 
             if(depth == 0){
-                
+                kame++;
                 return EvaluateBoard(state);
+               
             }
 
             else{
@@ -50,14 +60,15 @@ namespace SoftwareKingdom.Chess.UI
                     for(int i=0; i<possibleMoves.Count; i++){
 
                         ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                        double value = MiniMax(successorState, alpha, beta, depth-1, 0);
+                        double value = MiniMax(successorState, alpha, beta, depth-1, 1);
                         if(value > bestValue){
                             bestValue = value;
-                            Debug.Log(bestValue + "i");
+                            //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                            //Debug.Log(bestValue + "i");
                         }
                         if(value > alpha)
                             alpha = value;
-                        if(beta <= alpha)
+                        if(alpha <= beta)
                             break;
                     }
                     return bestValue;
@@ -69,9 +80,11 @@ namespace SoftwareKingdom.Chess.UI
                     for(int i=0; i<possibleMoves.Count; i++){
 
                         ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                        double value = MiniMax(successorState, alpha, beta,depth-1, 1);
+                        double value = MiniMax(successorState, alpha, beta,depth-1, 0);
                         if(value < bestValue)
                             bestValue = value;
+                            //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                            //Debug.Log(bestValue + "j");
                         if(value < beta)
                             beta = value;
                         if(beta <= alpha)
@@ -127,6 +140,8 @@ namespace SoftwareKingdom.Chess.UI
             return bestMove;
         }
 
+        
+
         private Move GetBestMoveOfAll(ChessState state){
 
             int turnPrefix = state.turn;
@@ -148,18 +163,21 @@ namespace SoftwareKingdom.Chess.UI
             for(int i = 0; i<possibleMoves.Count; i++){
                 ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
                 if(turnPrefix == 0){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 1, 0);
-                    if(tempValue > bestPoint){ 
+                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 2, 1);
+                    if(tempValue >= bestPoint){ 
                         bestPoint = tempValue;
                         bestMove = possibleMoves[i];
-                        Debug.Log(bestPoint);
+                        //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                        //Debug.Log(bestPoint + "k");
                     }
                 }
                 if(turnPrefix == 1){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 1, 1);
-                    if(tempValue < bestPoint){
+                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 2, 0);
+                    if(tempValue <= bestPoint){
                         bestPoint = tempValue;
                         bestMove = possibleMoves[i];
+                        //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                        //Debug.Log(bestPoint + "l");
                     }
                 }
             }
@@ -215,5 +233,137 @@ namespace SoftwareKingdom.Chess.UI
                 }
                 return score;
         }
+        private double GetIfCenter(ChessState state){
+            double score = 0;
+
+            string pieceNotationC11 = state.board[3,3];
+            if(pieceNotationC11 == "WP") score += 2;          
+            if(pieceNotationC11 == "WR") score += 1; 
+            if(pieceNotationC11 == "WN") score += 2;           
+            if(pieceNotationC11 == "WB") score += 2;                   
+            if(pieceNotationC11 == "WQ") score += 3;
+            if(pieceNotationC11 == "WK") score -= 2;
+                        
+            if(pieceNotationC11 == "BP") score -= 2;
+            if(pieceNotationC11 == "BR") score -= 1;
+            if(pieceNotationC11 == "BN") score -= 2;
+            if(pieceNotationC11 == "BB") score -= 2;
+            if(pieceNotationC11 == "BQ") score -= 3;
+            if(pieceNotationC11 == "BK") score += 2;
+
+
+            string pieceNotationC12 = state.board[3,4];
+            if(pieceNotationC12 == "WP") score += 2;          
+            if(pieceNotationC12 == "WR") score += 1; 
+            if(pieceNotationC12 == "WN") score += 2;           
+            if(pieceNotationC12 == "WB") score += 2;                   
+            if(pieceNotationC12 == "WQ") score += 3;
+            if(pieceNotationC12 == "WK") score -= 2;
+                        
+            if(pieceNotationC12 == "BP") score -= 2;
+            if(pieceNotationC12 == "BR") score -= 1;
+            if(pieceNotationC12 == "BN") score -= 2;
+            if(pieceNotationC12 == "BB") score -= 2;
+            if(pieceNotationC12 == "BQ") score -= 3;
+            if(pieceNotationC12 == "BK") score += 2;
+    
+
+            string pieceNotationC21 = state.board[4,3];
+            if(pieceNotationC21 == "WP") score += 2;          
+            if(pieceNotationC21 == "WR") score += 1; 
+            if(pieceNotationC21 == "WN") score += 2;           
+            if(pieceNotationC21 == "WB") score += 2;                   
+            if(pieceNotationC21 == "WQ") score += 3;
+            if(pieceNotationC21 == "WK") score -= 2;
+                        
+            if(pieceNotationC21 == "BP") score -= 2;
+            if(pieceNotationC21 == "BR") score -= 1;
+            if(pieceNotationC21 == "BN") score -= 2;
+            if(pieceNotationC21 == "BB") score -= 2;
+            if(pieceNotationC21 == "BQ") score -= 3;
+            if(pieceNotationC21 == "BK") score += 2;
+            
+
+            string pieceNotationC22 = state.board[4,4];
+            if(pieceNotationC22 == "WP") score += 2;          
+            if(pieceNotationC22 == "WR") score += 1; 
+            if(pieceNotationC22 == "WN") score += 2;           
+            if(pieceNotationC22 == "WB") score += 2;                   
+            if(pieceNotationC22 == "WQ") score += 3;
+            if(pieceNotationC22 == "WK") score -= 2;
+                        
+            if(pieceNotationC22 == "BP") score -= 2;
+            if(pieceNotationC22 == "BR") score -= 1;
+            if(pieceNotationC22 == "BN") score -= 2;
+            if(pieceNotationC22 == "BB") score -= 2;
+            if(pieceNotationC22 == "BQ") score -= 3;
+            if(pieceNotationC22 == "BK") score += 2;
+
+            return score;
+        }
+
+        private double EvaluateCheckForMove(ChessState state){
+            int turn = state.turn;
+            double currentBest = 0;
+            List<Move> moves = gameLogic.GenerateBoardMoves(state);
+                double k = -999,l = -999;
+                /*for (int i = 0; i < state.board.GetLength(0); i++){
+                    for (int j = 0; j < state.board.GetLength(1); j++){
+                        if(state.board[i,j] == "BK" && turn == 1){
+                            k = i;
+                            l = j;
+                        }
+                        if(state.board[i,j] == "WK" && turn == 0){
+                            k = i;
+                            l = j;
+                        }
+                    }
+                }
+                */
+                if( turn == 0){
+                    k = state.Search("BK").rankIndex;
+                    l = state.Search("BK").fileIndex;
+                }                   
+                if(turn == 1){
+                    k = state.Search("WK").rankIndex;
+                    l = state.Search("WK").fileIndex;
+                }
+               
+
+                for(int f = 0; f<moves.Count; f++){
+                int m = moves[f].targetCoord.rankIndex;
+                int n = moves[f].targetCoord.fileIndex;
+                if((!state.IsEmpty(moves[f].targetCoord)) && moves[f].targetCoord.rankIndex == k && moves[f].targetCoord.fileIndex == l){
+                    currentBest +=4;
+                }    
+            }
+            return currentBest;
+        }
+   
+        private double EvaluatePossibleCheckForMove(ChessState state){
+                double currentBest = 0;
+                List<Move> moves = gameLogic.GenerateBoardMoves(state);
+                List<Move> movesOpponent = gameLogic.GenerateBoardMovesForOpponent(state);
+                List<Move> movesOpponentKing = new List<Move>();
+                for(int p = 0; p < movesOpponent.Count; p++){
+                    if(state.GetPieceNotation(movesOpponent[p].startCoord) == 'K'){
+                        movesOpponentKing.Add(movesOpponent[p]);
+                    }
+                }
+                for(int f = 0; f<moves.Count; f++){
+                    double possibleKingCheck = 0;
+                    for(int z = 0; z < movesOpponentKing.Count; z++){
+                            if(moves[f].targetCoord == movesOpponentKing[z].targetCoord){   
+                                    possibleKingCheck += 0.1;
+                            }              
+                    }
+                currentBest += possibleKingCheck;
+                }
+                return currentBest;
+            }
+   
+   
     }
+
+
 }

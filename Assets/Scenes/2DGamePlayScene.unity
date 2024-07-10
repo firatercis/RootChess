@@ -14271,7 +14271,7 @@ MonoBehaviour:
   logic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}
   players:
   - {fileID: 11400000, guid: 250a74953f2fe46b08bf502a17e71e81, type: 2}
-  - {fileID: 11400000, guid: 7c116e192a4cfc34b87053b5db9a59bf, type: 2}
+  - {fileID: 11400000, guid: 32318eed949fb4336a4c3109a2ab9bbb, type: 2}
   uiManager: {fileID: 1795393288}
   seedSelectionPanel: {fileID: 1664844688}
 --- !u!114 &1918221803 stripped
