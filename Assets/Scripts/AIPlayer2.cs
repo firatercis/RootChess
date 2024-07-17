@@ -37,9 +37,9 @@ namespace SoftwareKingdom.Chess.UI
         private double EvaluateBoard(ChessState state){
             double point = 0;
             point += GetBoardPieceStatus(state);
-            point += GetIfCenter(state);
-            point += EvaluateCheckForMove(state);
-            point += EvaluatePossibleCheckForMove(state);
+            //point += GetIfCenter(state);
+            //point += EvaluateCheckForMove(state);
+            //point += EvaluatePossibleCheckForMove(state);
             return point;
         }
 
@@ -163,7 +163,7 @@ namespace SoftwareKingdom.Chess.UI
             for(int i = 0; i<possibleMoves.Count; i++){
                 ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
                 if(turnPrefix == 0){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 2, 1);
+                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 3, 1);
                     if(tempValue >= bestPoint){ 
                         bestPoint = tempValue;
                         bestMove = possibleMoves[i];
@@ -172,7 +172,7 @@ namespace SoftwareKingdom.Chess.UI
                     }
                 }
                 if(turnPrefix == 1){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 2, 0);
+                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 3, 0);
                     if(tempValue <= bestPoint){
                         bestPoint = tempValue;
                         bestMove = possibleMoves[i];
@@ -239,15 +239,15 @@ namespace SoftwareKingdom.Chess.UI
             string pieceNotationC11 = state.board[3,3];
             if(pieceNotationC11 == "WP") score += 2;          
             if(pieceNotationC11 == "WR") score += 1; 
-            if(pieceNotationC11 == "WN") score += 2;           
-            if(pieceNotationC11 == "WB") score += 2;                   
+            if(pieceNotationC11 == "WN") score += 4;           
+            if(pieceNotationC11 == "WB") score += 1;                   
             if(pieceNotationC11 == "WQ") score += 3;
             if(pieceNotationC11 == "WK") score -= 2;
                         
             if(pieceNotationC11 == "BP") score -= 2;
             if(pieceNotationC11 == "BR") score -= 1;
-            if(pieceNotationC11 == "BN") score -= 2;
-            if(pieceNotationC11 == "BB") score -= 2;
+            if(pieceNotationC11 == "BN") score -= 4;
+            if(pieceNotationC11 == "BB") score -= 1;
             if(pieceNotationC11 == "BQ") score -= 3;
             if(pieceNotationC11 == "BK") score += 2;
 
@@ -255,15 +255,15 @@ namespace SoftwareKingdom.Chess.UI
             string pieceNotationC12 = state.board[3,4];
             if(pieceNotationC12 == "WP") score += 2;          
             if(pieceNotationC12 == "WR") score += 1; 
-            if(pieceNotationC12 == "WN") score += 2;           
-            if(pieceNotationC12 == "WB") score += 2;                   
+            if(pieceNotationC12 == "WN") score += 4;           
+            if(pieceNotationC12 == "WB") score += 1;                   
             if(pieceNotationC12 == "WQ") score += 3;
             if(pieceNotationC12 == "WK") score -= 2;
                         
             if(pieceNotationC12 == "BP") score -= 2;
             if(pieceNotationC12 == "BR") score -= 1;
-            if(pieceNotationC12 == "BN") score -= 2;
-            if(pieceNotationC12 == "BB") score -= 2;
+            if(pieceNotationC12 == "BN") score -= 4;
+            if(pieceNotationC12 == "BB") score -= 1;
             if(pieceNotationC12 == "BQ") score -= 3;
             if(pieceNotationC12 == "BK") score += 2;
     
@@ -271,15 +271,15 @@ namespace SoftwareKingdom.Chess.UI
             string pieceNotationC21 = state.board[4,3];
             if(pieceNotationC21 == "WP") score += 2;          
             if(pieceNotationC21 == "WR") score += 1; 
-            if(pieceNotationC21 == "WN") score += 2;           
-            if(pieceNotationC21 == "WB") score += 2;                   
+            if(pieceNotationC21 == "WN") score += 4;           
+            if(pieceNotationC21 == "WB") score += 1;                   
             if(pieceNotationC21 == "WQ") score += 3;
             if(pieceNotationC21 == "WK") score -= 2;
                         
             if(pieceNotationC21 == "BP") score -= 2;
             if(pieceNotationC21 == "BR") score -= 1;
-            if(pieceNotationC21 == "BN") score -= 2;
-            if(pieceNotationC21 == "BB") score -= 2;
+            if(pieceNotationC21 == "BN") score -= 4;
+            if(pieceNotationC21 == "BB") score -= 1;
             if(pieceNotationC21 == "BQ") score -= 3;
             if(pieceNotationC21 == "BK") score += 2;
             
@@ -287,8 +287,8 @@ namespace SoftwareKingdom.Chess.UI
             string pieceNotationC22 = state.board[4,4];
             if(pieceNotationC22 == "WP") score += 2;          
             if(pieceNotationC22 == "WR") score += 1; 
-            if(pieceNotationC22 == "WN") score += 2;           
-            if(pieceNotationC22 == "WB") score += 2;                   
+            if(pieceNotationC22 == "WN") score += 4;           
+            if(pieceNotationC22 == "WB") score += 1;                   
             if(pieceNotationC22 == "WQ") score += 3;
             if(pieceNotationC22 == "WK") score -= 2;
                         

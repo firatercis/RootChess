@@ -150,6 +150,7 @@ namespace SoftwareKingdom.Chess.UI
 
         public void MakeMove(Move move)
         {
+            
             Vector3 position = GetPiecePosition(move.targetCoord);
 
             // If not planting seeds
@@ -254,7 +255,7 @@ namespace SoftwareKingdom.Chess.UI
                 }
 
             }
-
+            
             // If planting seeds
             else
             {
@@ -267,6 +268,8 @@ namespace SoftwareKingdom.Chess.UI
                 pieceLiner.AddSeed(pieceNotation.ToString(),  position, move.targetCoord, seedTurns);
                 Debug.Log("Grow seed: " + move.specialCondition + " at " + move.targetCoord);
             }
+
+            
         }
 
         public void UpdateSeeds(ChessState boardState)
