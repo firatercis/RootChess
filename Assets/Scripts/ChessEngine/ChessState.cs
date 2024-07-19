@@ -205,9 +205,37 @@ namespace SoftwareKingdom.Chess.Core
                 }
                 text += "\n";
             }
+            text += "" + turn;
             return text;
            
         }
+
+        public override bool Equals(object obj) {
+            bool result = true;
+            ChessState otherState = (ChessState)obj;
+
+            if(otherState.turn != turn)
+                result = false;
+            else
+            {
+                for (int i = 0; i < board.GetLength(0); i++)
+                {
+                    for (int j = 0; j < board.GetLength(1); j++)
+                    {
+                        if (board[i, j] != otherState.board[i, j])
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // TODO: flags
+
+            return result;
+        }
+
     }
 }
 

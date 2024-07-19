@@ -21,6 +21,9 @@ namespace SoftwareKingdom.Chess.UI
         ChessState currentChessState;
         int kame = 0;
 
+        // State variables
+        Dictionary <string, double> transpositionTable = new Dictionary<string, double>();
+        int numberOfTraversedNodes = 0;
     
         public override bool IsHuman() { return false; }
 
@@ -32,7 +35,7 @@ namespace SoftwareKingdom.Chess.UI
             kame = 0;
 
             gameLogic.PlayMove(state, GetBestMoveOfAll(state));
-            Debug.Log(kame);
+           
         }
         
         private double EvaluateBoard(ChessState state){
@@ -46,10 +49,23 @@ namespace SoftwareKingdom.Chess.UI
 
         private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer){
             //Debug.Log("Depth = " + depth);
+            // Check transposition table
+            double savedValue;
 
-            if(depth == 0){
+            numberOfTraversedNodes++;
+            if (transpositionTable.TryGetValue(state.ToString(), out savedValue))
+            {
+                Debug.Log("Transposition Table works");
+                return savedValue;
+            }
+
+
+
+            if (depth == 0){
                 kame++;
-                return EvaluateBoard(state);
+                double value = EvaluateBoard(state);
+             //   transpositionTable.Add(state.ToString(),value);   
+                return value;
                
             }
 
@@ -69,11 +85,13 @@ namespace SoftwareKingdom.Chess.UI
                             //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
                             //Debug.Log(bestValue + "i");
                         }
-                        if(value > alpha)
-                            alpha = value;
-                        if(alpha <= beta)
-                            break;
+                        //if (value > alpha)
+                        //    alpha = value;
+                        //if (alpha <= beta)
+                        //    break;
                     }
+                  
+                   // transpositionTable.Add(state.ToString(), bestValue);   
                     return bestValue;
                 }
 
@@ -89,13 +107,15 @@ namespace SoftwareKingdom.Chess.UI
                         double value = MiniMax(successorState, alpha, beta, depth-1, 0);
                         if(value < bestValue)
                             bestValue = value;
-                            //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
-                            //Debug.Log(bestValue + "j");
-                        if(value < beta)
-                            beta = value;
-                        if(beta <= alpha)
-                            break;
+                        //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                        //Debug.Log(bestValue + "j");
+                        //if (value < beta)
+                        //    beta = value;
+                        //if (beta <= alpha)
+                        //    break;
                     }
+
+                    //transpositionTable.Add(state.ToString(), bestValue);
                     return bestValue;
                 }
                 
@@ -151,7 +171,10 @@ namespace SoftwareKingdom.Chess.UI
         private Move GetBestMoveOfAll(ChessState state){
 
             List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
-            
+
+            numberOfTraversedNodes = 0;
+            transpositionTable.Clear();
+
             int randomNumber = GenerateRandomNumber(possibleMoves.Count);
             Move bestMove = possibleMoves[randomNumber];
             //ChessState tempState = gameLogic.GenerateMoveSuccessor(state, bestMove);
@@ -167,14 +190,15 @@ namespace SoftwareKingdom.Chess.UI
             double maxBeta = 99;
             double tempValue;
 
+            float oldTimeSeconds = Time.realtimeSinceStartup;
 
             for(int i = 0; i<possibleMoves.Count; i++){
                 if(state.turn == 0){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                    
                     tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1-state.turn);
 
                     if(tempValue >= bestPointWhite){ 
-                        Debug.Log("qqq");
                         bestPointWhite = tempValue;
                         bestMove = possibleMoves[i];
                         //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
@@ -192,7 +216,7 @@ namespace SoftwareKingdom.Chess.UI
                     }
                 }
             }
-            
+
             /*
             if(state.turn == 0 && bestPoint <= bestPointControl){
                 randomNumber = GenerateRandomNumber(possibleMoves.Count);
@@ -203,7 +227,10 @@ namespace SoftwareKingdom.Chess.UI
                 bestMove = possibleMoves[randomNumber];
             }
             */
-            
+            Debug.Log("Traversed nodes: " + numberOfTraversedNodes);
+            float newTimeSeconds = Time.realtimeSinceStartup;
+            Debug.Log("ElapsedTime: " + (newTimeSeconds - oldTimeSeconds));
+
 
             return bestMove;
         }
