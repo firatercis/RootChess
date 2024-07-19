@@ -47,78 +47,143 @@ namespace SoftwareKingdom.Chess.UI
             return point;
         }
 
-        private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer){
-            //Debug.Log("Depth = " + depth);
+        /* private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer){
+             //Debug.Log("Depth = " + depth);
+             // Check transposition table
+             double savedValue;
+
+             numberOfTraversedNodes++;
+             if (transpositionTable.TryGetValue(state.ToString(), out savedValue))
+             {
+                 //Debug.Log("Transposition Table works");
+                 return savedValue;
+             }
+
+
+
+             if (depth == 0){
+                 kame++;
+                 double value = EvaluateBoard(state);
+                 transpositionTable.Add(state.ToString(),value);   
+                 return value;
+
+             }
+
+             else{
+                 if(maximizingPlayer == 0){
+                     //Debug.Log(state.turn + "aa");
+
+                     double bestValue = -100;
+                     List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
+
+                     for(int i=0; i<possibleMoves.Count; i++){
+
+                         ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                         double value = MiniMax(successorState, bestValue, 100, depth-1, 1);
+                         if(value > bestValue){
+                             bestValue = value;
+                             //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                             //Debug.Log(bestValue + "i");
+                         }
+                         if (bestValue > beta)
+                             break;
+                         //if (bestValue > alpha)
+                         //    alpha = bestValue;
+                         //if (alpha <= beta)
+                         //    break;
+                     }
+
+                     transpositionTable.Add(state.ToString(), bestValue);   
+                     return bestValue;
+                 }
+
+                 else{
+                     //Debug.Log(state.turn + "bb");
+
+                     double bestValue = 100;
+                     List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
+
+                     for(int i=0; i<possibleMoves.Count; i++){
+
+                         ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                         double value = MiniMax(successorState, -100, bestValue, depth-1, 0);
+
+
+
+                         if(value < bestValue)
+                             bestValue = value;
+                         //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
+                         //Debug.Log(bestValue + "j");
+                         if (bestValue < alpha)
+
+                             break;
+                         //if (bestValue < beta)
+                         //    beta = bestValue;
+                         //if (beta <= alpha)
+                         //    break;
+                     }
+
+                     transpositionTable.Add(state.ToString(), bestValue);
+                     return bestValue;
+                 }
+
+             }
+         }*/
+
+        private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer) {
+
             // Check transposition table
             double savedValue;
-
             numberOfTraversedNodes++;
+
             if (transpositionTable.TryGetValue(state.ToString(), out savedValue))
             {
-                Debug.Log("Transposition Table works");
+                // Debug.Log("Transposition Table works");
                 return savedValue;
             }
 
-
-
-            if (depth == 0){
-                kame++;
+            if (depth == 0)
+            {
                 double value = EvaluateBoard(state);
-             //   transpositionTable.Add(state.ToString(),value);   
+                transpositionTable[state.ToString()] = value;
                 return value;
-               
             }
 
-            else{
-                if(maximizingPlayer == 0){
-                    //Debug.Log(state.turn + "aa");
+            if (maximizingPlayer == 0)
+            {
+                double bestValue = double.NegativeInfinity;
+                List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
 
-                    double bestValue = -100;
-                    List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
-
-                    for(int i=0; i<possibleMoves.Count; i++){
-
-                        ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                        double value = MiniMax(successorState, alpha, beta, depth-1, 1);
-                        if(value > bestValue){
-                            bestValue = value;
-                            //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
-                            //Debug.Log(bestValue + "i");
-                        }
-                        //if (value > alpha)
-                        //    alpha = value;
-                        //if (alpha <= beta)
-                        //    break;
-                    }
-                  
-                   // transpositionTable.Add(state.ToString(), bestValue);   
-                    return bestValue;
+                for (int i = 0; i < possibleMoves.Count; i++)
+                {
+                    ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                    double value = MiniMax(successorState, alpha, beta, depth - 1, 1);
+                    bestValue = Math.Max(bestValue, value);
+                    alpha = Math.Max(alpha, bestValue);
+                    if (beta <= alpha)
+                        break; // Beta cutoff
                 }
 
-                else{
-                    //Debug.Log(state.turn + "bb");
+                transpositionTable[state.ToString()] = bestValue;
+                return bestValue;
+            }
+            else
+            {
+                double bestValue = double.PositiveInfinity;
+                List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
 
-                    double bestValue = 100;
-                    List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
-
-                    for(int i=0; i<possibleMoves.Count; i++){
-
-                        ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                        double value = MiniMax(successorState, alpha, beta, depth-1, 0);
-                        if(value < bestValue)
-                            bestValue = value;
-                        //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
-                        //Debug.Log(bestValue + "j");
-                        //if (value < beta)
-                        //    beta = value;
-                        //if (beta <= alpha)
-                        //    break;
-                    }
-
-                    //transpositionTable.Add(state.ToString(), bestValue);
-                    return bestValue;
+                for (int i = 0; i < possibleMoves.Count; i++)
+                {
+                    ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                    double value = MiniMax(successorState, alpha, beta, depth - 1, 0);
+                    bestValue = Math.Min(bestValue, value);
+                    beta = Math.Min(beta, bestValue);
+                    if (beta <= alpha)
+                        break; // Alpha cutoff
                 }
-                
+
+                transpositionTable[state.ToString()] = bestValue;
+                return bestValue;
             }
         }
 
@@ -196,7 +261,7 @@ namespace SoftwareKingdom.Chess.UI
                 if(state.turn == 0){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
                     
-                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1-state.turn);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta,3, 1-state.turn);
 
                     if(tempValue >= bestPointWhite){ 
                         bestPointWhite = tempValue;
@@ -207,7 +272,7 @@ namespace SoftwareKingdom.Chess.UI
                 }
                 if(state.turn == 1){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1-state.turn);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 3, 1-state.turn);
                     if(tempValue < bestPointBlack){
                         bestPointBlack = tempValue;
                         bestMove = possibleMoves[i];
