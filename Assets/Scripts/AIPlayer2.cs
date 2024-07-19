@@ -1,4 +1,5 @@
 
+
 using System;
 using SoftwareKingdom.Chess.Core;
 using SoftwareKingdom.Chess.RootChess;
@@ -54,6 +55,8 @@ namespace SoftwareKingdom.Chess.UI
 
             else{
                 if(maximizingPlayer == 0){
+                    //Debug.Log(state.turn + "aa");
+
                     double bestValue = -100;
                     List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
 
@@ -73,14 +76,17 @@ namespace SoftwareKingdom.Chess.UI
                     }
                     return bestValue;
                 }
+
                 else{
+                    //Debug.Log(state.turn + "bb");
+
                     double bestValue = 100;
                     List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
 
                     for(int i=0; i<possibleMoves.Count; i++){
 
                         ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                        double value = MiniMax(successorState, alpha, beta,depth-1, 0);
+                        double value = MiniMax(successorState, alpha, beta, depth-1, 0);
                         if(value < bestValue)
                             bestValue = value;
                             //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
@@ -92,7 +98,7 @@ namespace SoftwareKingdom.Chess.UI
                     }
                     return bestValue;
                 }
-
+                
             }
         }
 
@@ -144,37 +150,42 @@ namespace SoftwareKingdom.Chess.UI
 
         private Move GetBestMoveOfAll(ChessState state){
 
-            int turnPrefix = state.turn;
             List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
             
             int randomNumber = GenerateRandomNumber(possibleMoves.Count);
             Move bestMove = possibleMoves[randomNumber];
-            ChessState tempState = gameLogic.GenerateMoveSuccessor(state, bestMove);
+            //ChessState tempState = gameLogic.GenerateMoveSuccessor(state, bestMove);
+            
 
 
-            double bestPointControl = EvaluateBoard(tempState);
-            double bestPoint = EvaluateBoard(tempState);
+            //double bestPointControl = EvaluateBoard(tempState);
+            double bestPointWhite = -999;
+            double bestPointBlack = 999;
 
             double bestValue = 0;
             double minAlpha = -99;
             double maxBeta = 99;
+            double tempValue;
 
 
             for(int i = 0; i<possibleMoves.Count; i++){
-                ChessState successorState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                if(turnPrefix == 0){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 3, 1);
-                    if(tempValue >= bestPoint){ 
-                        bestPoint = tempValue;
+                if(state.turn == 0){
+                    ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1-state.turn);
+
+                    if(tempValue >= bestPointWhite){ 
+                        Debug.Log("qqq");
+                        bestPointWhite = tempValue;
                         bestMove = possibleMoves[i];
                         //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
                         //Debug.Log(bestPoint + "k");
                     }
                 }
-                if(turnPrefix == 1){
-                    double tempValue = MiniMax(successorState, minAlpha, maxBeta, 3, 0);
-                    if(tempValue <= bestPoint){
-                        bestPoint = tempValue;
+                if(state.turn == 1){
+                    ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1-state.turn);
+                    if(tempValue < bestPointBlack){
+                        bestPointBlack = tempValue;
                         bestMove = possibleMoves[i];
                         //Debug.Log(possibleMoves[i].startCoord.rankIndex + " " + possibleMoves[i].startCoord.fileIndex);
                         //Debug.Log(bestPoint + "l");
@@ -182,14 +193,16 @@ namespace SoftwareKingdom.Chess.UI
                 }
             }
             
-            if(turnPrefix == 0 && bestPoint <= bestPointControl){
+            /*
+            if(state.turn == 0 && bestPoint <= bestPointControl){
                 randomNumber = GenerateRandomNumber(possibleMoves.Count);
                 bestMove = possibleMoves[randomNumber];
             }
-            if(turnPrefix == 1 && bestPoint >= bestPointControl){
+            if(state.turn == 1 && bestPoint >= bestPointControl){
                 randomNumber = GenerateRandomNumber(possibleMoves.Count);
                 bestMove = possibleMoves[randomNumber];
             }
+            */
             
 
             return bestMove;
