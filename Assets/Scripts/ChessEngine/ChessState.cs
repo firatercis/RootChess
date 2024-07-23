@@ -236,6 +236,12 @@ namespace SoftwareKingdom.Chess.Core
             return result;
         }
 
+        public string GetPieceAt(int row, int col)
+        {
+            return board[row, col];
+        }
+
+       
     }
 }
 

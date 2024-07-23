@@ -458,6 +458,8 @@ namespace SoftwareKingdom.Chess.Core
             return GenerateBoardMovesForOpponent(boardState, checkLegal: false);
         }
 
+       
+
         protected virtual List<Move> GenerateBoardMoves(ChessState boardState, bool checkLegal) {
             List<Move> pseudoLegalMoves = new List<Move>();
             for (int i = 0; i < boardState.board.GetLength(0); i++)
@@ -503,6 +505,27 @@ namespace SoftwareKingdom.Chess.Core
             //Debug.Log("Turn: " + boardState.turn);
             
             return legalMoves;
+        }
+
+        public override bool IsCheck(ChessState state, Move move)
+        {
+            // Yeni durumu oluşturun
+            ChessState newState = GenerateMoveSuccessor(state, move);
+            
+            // Rakibin tüm olası hamlelerini oluşturun
+            List<Move> opponentMoves = GenerateBoardMovesForOpponent(newState, checkLegal: false);
+
+            // Rakibin hamleleri arasında şahı tehdit eden hamle olup olmadığını kontrol edin
+            foreach (var opponentMove in opponentMoves)
+            {
+                char piece = newState.GetPieceNotation(opponentMove.targetCoord);
+                if (piece != null && piece ==  KING_PIECE_NOTATION)
+                {
+                    return true; // Şah tehdit altında
+                }
+            }
+
+            return false; // Şah tehdit altında değil
         }
 
 

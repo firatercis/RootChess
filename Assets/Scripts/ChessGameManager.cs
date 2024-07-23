@@ -85,7 +85,7 @@ public class ChessGameManager : MonoBehaviour
     {
         //uiManager.MakeMove(move, currentBoardState);
         if(!logic.gameEnd)
-            Invoke(nameof(OnTurn), 0.1f);
+            Invoke(nameof(OnTurn), 0.3f);
     }
    
 

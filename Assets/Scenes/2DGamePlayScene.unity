@@ -8514,7 +8514,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.72900003}
   m_AnchorMax: {x: 1, y: 0.9062593}
-  m_AnchoredPosition: {x: -0.027526855, y: -109.19}
+  m_AnchoredPosition: {x: -0.02746582, y: -109.19}
   m_SizeDelta: {x: -0.055023193, y: 152.8293}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1184307138
@@ -12119,7 +12119,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.084437504, y: 0.028777778}
   m_AnchorMax: {x: 0.6924375, y: 0.24637042}
-  m_AnchoredPosition: {x: 3, y: -4.500641}
+  m_AnchoredPosition: {x: 3, y: -4.500519}
   m_SizeDelta: {x: -5.049988, y: -9.979797}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1664844685
@@ -13712,7 +13712,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.381, y: 0.1977806}
   m_AnchorMax: {x: 0.628, y: 0.40100002}
-  m_AnchoredPosition: {x: -3, y: -2.4600239}
+  m_AnchoredPosition: {x: -3, y: -2.460022}
   m_SizeDelta: {x: -4, y: -0.9300003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1815675893
@@ -14271,7 +14271,7 @@ MonoBehaviour:
   logic: {fileID: 11400000, guid: 5c22abe8ce1d0a84d882cec12f9005c3, type: 2}
   players:
   - {fileID: 11400000, guid: 250a74953f2fe46b08bf502a17e71e81, type: 2}
-  - {fileID: 11400000, guid: 7c116e192a4cfc34b87053b5db9a59bf, type: 2}
+  - {fileID: 11400000, guid: aea116ffd2236418a9069d7d18efa093, type: 2}
   uiManager: {fileID: 1795393288}
   seedSelectionPanel: {fileID: 1664844688}
 --- !u!114 &1918221803 stripped
