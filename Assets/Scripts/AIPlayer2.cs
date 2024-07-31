@@ -30,7 +30,6 @@ namespace SoftwareKingdom.Chess.UI
         // State variables
         //Dictionary <string, double> transpositionTable = new Dictionary<string, double>();
         int numberOfTraversedNodes = 0;
-        int hamle = 0;
     
         public override bool IsHuman() { return false; }
 
@@ -42,11 +41,8 @@ namespace SoftwareKingdom.Chess.UI
 
             if(gameLogic.gameEnd != true){
                 gameLogic.PlayMove(state, GetBestMoveOfAll(state));
-                hamle++;
-                Debug.Log(hamle);
             }
-            else 
-                hamle = 0;
+            
            
         }
 
@@ -131,8 +127,9 @@ namespace SoftwareKingdom.Chess.UI
         
         private Dictionary<ulong, double> transpositionTable = new Dictionary<ulong, double>();
         private ZobristHashing zobristHashing = new ZobristHashing();
+        private const int NULL_MOVE_REDUCTION = 2; // Depth reduction for null move
 
-
+        
         private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer)
         {
             numberOfTraversedNodes++;
@@ -153,9 +150,35 @@ namespace SoftwareKingdom.Chess.UI
                 transpositionTable[hash] = (value);
                 return value;
             }
+          
+            
+
+
 
             List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
-            //possibleMoves = OrderMoves(state, possibleMoves); // Move ordering uygulanıyor
+            possibleMoves = OrderMoves(state, possibleMoves); // Move ordering uygulanıyor
+
+
+            
+            
+            
+
+             if (depth >= NULL_MOVE_REDUCTION+1   && !(gameLogic.IsCheckForMe(state)))
+                {
+                    int turn = state.turn;
+                    ApplyNullMove(state);
+                    double nullMoveValue = -MiniMax(state, -beta, -beta +1, depth - NULL_MOVE_REDUCTION-1 , 1-turn);                
+                    state.turn = turn;
+
+                    if (nullMoveValue >= beta)
+                    {
+                        transpositionTable[hash] = nullMoveValue;
+                        return nullMoveValue;
+                    }
+                }
+            
+
+
 
             if (maximizingPlayer == 0)
             {
@@ -195,6 +218,29 @@ namespace SoftwareKingdom.Chess.UI
             }
         }
         
+
+        
+
+        // Placeholder methods for null move operations
+        private void ApplyNullMove(ChessState state)
+        {
+            // Implement the logic to apply a null move
+            state.turn = 1-(state.turn);
+        }
+
+        private void UndoNullMove(ChessState state)
+        {
+            // Implement the logic to undo a null move
+            state.turn = 1-(state.turn);
+        }
+
+        private bool IsNullMoveValid(ChessState state)
+        {
+            // Implement the logic to check if a null move is valid
+
+            return !(gameLogic.IsCheckForMe(state));
+        }
+                
         
         
         
@@ -249,6 +295,7 @@ namespace SoftwareKingdom.Chess.UI
             transpositionTable.Clear();
 
             List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
+            //possibleMoves = OrderMoves(state, possibleMoves);
 
             
 
@@ -274,8 +321,8 @@ namespace SoftwareKingdom.Chess.UI
             for(int i = 0; i<possibleMoves.Count; i++){
                 if(state.turn == 0){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                    
-                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1 - state.turn);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 3, tempState.turn);
+
                     if(tempValue >= bestPointWhite){ 
                         bestPointWhite = tempValue;
                         bestMove = possibleMoves[i];
@@ -285,7 +332,8 @@ namespace SoftwareKingdom.Chess.UI
                 }
                 if(state.turn == 1){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 2, 1 - state.turn);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 3, tempState.turn);
+
                     if(tempValue <= bestPointBlack){
                         bestPointBlack = tempValue;
                         bestMove = possibleMoves[i];
@@ -314,7 +362,9 @@ namespace SoftwareKingdom.Chess.UI
 
             return bestMove;
         }
+        
 
+      
         
 
         private int GenerateRandomNumber(int numberOfMoves){
@@ -504,19 +554,7 @@ namespace SoftwareKingdom.Chess.UI
                 InitZobristTable();
             }
 
-            /*
-            private void InitZobristTable()
-            {
-                System.Random rng = new System.Random();
-                for (int i = 0; i < boardSize; i++)
-                {
-                    for (int j = 0; j < pieceTypes; j++)
-                    {
-                        zobristTable[i, j] = (ulong)(rng.NextDouble() * ulong.MaxValue);
-                    }
-                }
-            }
-            */
+           
             private void InitZobristTable()
             {
                 using (var rng = new RNGCryptoServiceProvider())
@@ -573,18 +611,54 @@ namespace SoftwareKingdom.Chess.UI
             // Simple heuristic: captures first, then checks, then others
             moves.Sort((move1, move2) =>
             {
-                int score1 = EvaluateMove(state, move1);
-                int score2 = EvaluateMove(state, move2);
+                int score1 = 0, score2 = 0;
+                score1 += EvaluateCapture(state, move1);
+                //score1 += EvaluateCheck(state, move1);
+                //if(state.GetPieceNotation(move1.startCoord) == 'K')
+                //    score1 -=5;
+                //if(move1.specialCondition == SpecialConditions.PromoteToQueen)
+                //    score1 +=100;
+                if(IsCenter(move1.targetCoord))
+                    score1 +=3;
+
+                score2 += EvaluateCapture(state, move2);
+                //score2 += EvaluateCheck(state, move2);
+                //if(state.GetPieceNotation(move2.startCoord) == 'K')
+                //    score2 -=5;
+                //if(move2.specialCondition == SpecialConditions.PromoteToQueen)
+                //    score2 +=100;
+                if(IsCenter(move2.targetCoord))
+                    score2 +=3;
+
+                
                 return score2.CompareTo(score1); // Descending order
             });
             return moves;
         }
 
-        private int EvaluateMove(ChessState state, Move move)
+        private int EvaluateCapture(ChessState state, Move move)
         {
             // Simple heuristic: value of the captured piece
             string targetPiece = state.GetPieceAt(move.targetCoord.rankIndex, move.targetCoord.fileIndex);
-            return targetPiece != null ? GetPieceValue(targetPiece) : 0;
+            int captureTarget = targetPiece != null && state.turn != state.GetColor(targetPiece) ? GetPieceValue(targetPiece) : 0;
+            //int checkTarget = targetPiece != null && state.turn != state.GetColor(targetPiece) && targetPiece == "K" ? 10 : 0;
+
+            return captureTarget;
+        }
+        private int EvaluateCheck(ChessState state, Move move)
+        {
+            bool isChech = gameLogic.IsCheckForMe(state);
+            
+            return isChech ? 5 : 0;
+        }
+
+        private bool IsCenter(Coord coord)
+        {
+            // Central squares in a standard 8x8 chessboard
+            
+            if(coord == new Coord(3,3) || coord == new Coord(3,4) || coord == new Coord(4,3) || coord == new Coord(4,4))
+                return true;
+            return false;
         }
 
         private int GetPieceValue(string piece)
@@ -597,95 +671,82 @@ namespace SoftwareKingdom.Chess.UI
                 case "WB": return 3;
                 case "WQ": return 9;
                 case "WK": return 100;
-                case "BP": return -2;
-                case "BR": return -5;
-                case "BN": return -3;
-                case "BB": return -3;
-                case "BQ": return -9;
-                case "BK": return -100;
+                case "BP": return 2;
+                case "BR": return 5;
+                case "BN": return 3;
+                case "BB": return 3;
+                case "BQ": return 9;
+                case "BK": return 100;
                 default: return 0;
             }
         }
-        
-        private List<Move> OrderMoves1(List<Move> moves, ChessState state)
-        {
-            // Capture moves first, then check moves, then others
-            List<Move> captureMoves = new List<Move>();
-            List<Move> checkMoves = new List<Move>();
-            List<Move> otherMoves = new List<Move>();
-
-            foreach (var move in moves)
-            {
-
-                if (state.GetPieceNotation(move.targetCoord) != null && state.GetColor(state.GetPieceAt(move.targetCoord.rankIndex, move.targetCoord.fileIndex)) == 1)
-                {
-                    captureMoves.Add(move);
-                }
-                else if (gameLogic.IsCheck(state, move))
-                {
-                    checkMoves.Add(move);
-                }
-                else
-                {
-                    otherMoves.Add(move);
-                }
-            }
-
-            // Combine all moves
-            //captureMoves.AddRange(checkMoves);
-            captureMoves.AddRange(otherMoves);
-            return captureMoves;
-        }
-        
         
         /*
-        private List<Move> OrderMoves(List<Move> moves, ChessState state)
+        private List<Move> OrderMovesWithHeapSort(ChessState state, List<Move> moves)
         {
-            return moves.OrderByDescending(move => GetMoveScore(move, state)).ToList();
+            HeapSort(moves, state);
+            return moves;
         }
 
-        private int GetMoveScore(Move move, ChessState state)
+        private void Heapify(List<Move> moves, int n, int i, ChessState state)
         {
-            int score = 0;
+            int largest = i;
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
 
-            // Generate the successor state
-            ChessState newState = gameLogic.GenerateMoveSuccessor(state, move);
+            if (left < n && GetMoveScore(state, moves[left]) > GetMoveScore(state, moves[largest]))
+                largest = left;
 
-            // Prioritize capture moves
-            if (newState.GetPieceNotation(move.targetCoord) != BaseChessLogic.EMPTY_NOTATION)
+            if (right < n && GetMoveScore(state, moves[right]) > GetMoveScore(state, moves[largest]))
+                largest = right;
+
+            if (largest != i)
             {
-                score += 100 + GetPieceValue(newState.GetPieceNotation(move.targetCoord));
+                Swap(moves, i, largest);
+                Heapify(moves, n, largest, state);
             }
-
-            // Prioritize check moves
-            if (gameLogic.IsCheck(newState, move))
-            {
-                score += 50;
-            }
-
-            // Additional heuristics can be added here
-
-            return score;
         }
 
-        private int GetPieceValue(char piece)
+        private void Swap(List<Move> moves, int i, int j)
         {
-            switch (piece)
+            Move temp = moves[i];
+            moves[i] = moves[j];
+            moves[j] = temp;
+        }
+
+        private void HeapSort(List<Move> moves, ChessState state)
+        {
+            int n = moves.Count;
+
+            for (int i = n / 2 - 1; i >= 0; i--)
+                Heapify(moves, n, i, state);
+
+            for (int i = n - 1; i > 0; i--)
             {
-                case BaseChessLogic.PAWN_PIECE_NOTATION: return 1;
-                case BaseChessLogic.KNIGHT_PIECE_NOTATION: return 3;
-                case BaseChessLogic.BISHOP_PIECE_NOTATION: return 3;
-                case BaseChessLogic.ROOK_PIECE_NOTATION: return 5;
-                case BaseChessLogic.QUEEN_PIECE_NOTATION: return 9;
-                case BaseChessLogic.KING_PIECE_NOTATION: return 1000; // High value for the king
-                default: return 0;
+                Swap(moves, 0, i);
+                Heapify(moves, i, 0, state);
             }
+        }
+
+        private int GetMoveScore(ChessState state, Move move1){
+            int score1 = 0;
+                score1 += EvaluateCapture(state, move1);
+                score1 += EvaluateCheck(state, move1);
+                if(state.GetPieceNotation(move1.startCoord) == 'K')
+                    score1 -=5;
+                if(move1.specialCondition == SpecialConditions.PromoteToQueen)
+                    score1 +=100;
+                if(IsCenter(move1.targetCoord))
+                    score1 +=3;
+            return score1;
         }
         */
-       
-   
-   
+
     }
+
+
+
+    
 
 
 }

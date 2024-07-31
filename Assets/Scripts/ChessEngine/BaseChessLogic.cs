@@ -238,6 +238,7 @@ namespace SoftwareKingdom.Chess.Core
             SwitchTurn(boardState);
 
         }
+      
 
         
         public override void CheckGameEnd(ChessState boardState){
@@ -518,17 +519,38 @@ namespace SoftwareKingdom.Chess.Core
             // Rakibin hamleleri arasında şahı tehdit eden hamle olup olmadığını kontrol edin
             foreach (var opponentMove in opponentMoves)
             {
-                char piece = newState.GetPieceNotation(opponentMove.targetCoord);
-                if (piece != null && piece ==  KING_PIECE_NOTATION)
+                string piece = newState.GetPieceAt(opponentMove.targetCoord.rankIndex, opponentMove.targetCoord.fileIndex);
+                if (piece != null && state.turn != newState.GetColor(piece) && piece[1] ==  KING_PIECE_NOTATION)
                 {
+                    Debug.Log("lllfffff");
+
                     return true; // Şah tehdit altında
                 }
             }
 
             return false; // Şah tehdit altında değil
         }
+        
+        public override bool IsCheckForMe(ChessState state)
+        {
+            
+            // Rakibin tüm olası hamlelerini oluşturun
+            List<Move> opponentMoves = GenerateBoardMovesForOpponent(state, checkLegal: false);
 
+            // Rakibin hamleleri arasında şahı tehdit eden hamle olup olmadığını kontrol edin
+            foreach (var opponentMove in opponentMoves)
+            {
+                string piece = state.GetPieceAt(opponentMove.targetCoord.rankIndex, opponentMove.targetCoord.fileIndex);
+                if (piece != null && state.turn == state.GetColor(piece) && piece[1] ==  KING_PIECE_NOTATION)
+                {
+                    Debug.Log("şşş");
+                    return true; // Şah tehdit altında
+                }
+            }
 
+            return false; // Şah tehdit altında değil
+        }
+        
         public override string GetVariantName() {
             return VARIANT_NAME;
         }

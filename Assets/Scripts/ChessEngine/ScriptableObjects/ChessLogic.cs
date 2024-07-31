@@ -55,6 +55,7 @@ namespace SoftwareKingdom.Chess.Core
         public abstract ChessState GenerateMoveSuccessor(ChessState inputState, Move move);
 
         public abstract bool IsCheck(ChessState state, Move move);
+        public abstract bool IsCheckForMe(ChessState state);
 
 
         public abstract List<Move> GenerateMoves(ChessState boardState, Coord sourceCoord,bool checkLegal = true);
