@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 
 using System.Linq;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace SoftwareKingdom.Chess.UI
         ChessState currentChessState;
 
         // State variables
+        int maxDepth = 2;
+
         //Dictionary <string, double> transpositionTable = new Dictionary<string, double>();
         int numberOfTraversedNodes = 0;
     
@@ -127,7 +130,7 @@ namespace SoftwareKingdom.Chess.UI
         
         private Dictionary<ulong, double> transpositionTable = new Dictionary<ulong, double>();
         private ZobristHashing zobristHashing = new ZobristHashing();
-        private const int NULL_MOVE_REDUCTION = 2; // Depth reduction for null move
+        private const int NULL_MOVE_REDUCTION = 3;  // Depth reduction for null move
 
         
         private double MiniMax(ChessState state, double alpha, double beta, int depth, int maximizingPlayer)
@@ -160,25 +163,36 @@ namespace SoftwareKingdom.Chess.UI
 
 
             
+            /*
             
-            
+            if (depth >= NULL_MOVE_REDUCTION+1   && !(gameLogic.IsCheckForMe(state)))
+            {
+                int turn = state.turn;
+                ApplyNullMove(state);
+                double nullMoveValue = -MiniMax(state, -beta, -beta +1, depth - NULL_MOVE_REDUCTION -1, 1-turn);   
+                state.turn = turn;             
+                if (nullMoveValue >= beta)
 
-             if (depth >= NULL_MOVE_REDUCTION+1   && !(gameLogic.IsCheckForMe(state)))
                 {
-                    int turn = state.turn;
-                    ApplyNullMove(state);
-                    double nullMoveValue = -MiniMax(state, -beta, -beta +1, depth - NULL_MOVE_REDUCTION-1 , 1-turn);                
-                    state.turn = turn;
-
-                    if (nullMoveValue >= beta)
-                    {
-                        transpositionTable[hash] = nullMoveValue;
-                        return nullMoveValue;
-                    }
+                    return nullMoveValue;
                 }
+            }
             
+            */
+            // Null Move Pruning
+            if (depth >= NULL_MOVE_REDUCTION+1   && !(gameLogic.IsCheckForMe(state) ))
+            {
+                int turn = state.turn;
+                ApplyNullMove(state);
+                double nullMoveValue = MiniMax(state, alpha, beta , depth - NULL_MOVE_REDUCTION -1, turn);   
+                state.turn = turn;             
+                if (nullMoveValue >= beta)
 
-
+                {
+                    return nullMoveValue;
+                }
+            }
+            
 
             if (maximizingPlayer == 0)
             {
@@ -321,7 +335,7 @@ namespace SoftwareKingdom.Chess.UI
             for(int i = 0; i<possibleMoves.Count; i++){
                 if(state.turn == 0){
                     ChessState tempState = gameLogic.GenerateMoveSuccessor(state, possibleMoves[i]);
-                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 3, tempState.turn);
+                    tempValue = MiniMax(tempState, minAlpha, maxBeta, 5, tempState.turn);
 
                     if(tempValue >= bestPointWhite){ 
                         bestPointWhite = tempValue;
@@ -408,6 +422,13 @@ namespace SoftwareKingdom.Chess.UI
         private double GetIfCenter(ChessState state){
             double score = 0;
 
+            List<Move> possibleMoves = gameLogic.GenerateBoardMoves(state);
+            for(int i = 0; i< possibleMoves.Count; i++){
+                if(IsCenter(possibleMoves[i].targetCoord))
+                    score += 5;
+            }
+
+            /*
             string pieceNotationC11 = state.board[3,3];
             if(pieceNotationC11 == "WP") score += 2;          
             if(pieceNotationC11 == "WR") score += 1; 
@@ -470,6 +491,7 @@ namespace SoftwareKingdom.Chess.UI
             if(pieceNotationC22 == "BB") score -= 2;
             if(pieceNotationC22 == "BQ") score -= 3;
             if(pieceNotationC22 == "BK") score += 2;
+            */
 
             return score;
         }
@@ -618,8 +640,8 @@ namespace SoftwareKingdom.Chess.UI
                 //    score1 -=5;
                 //if(move1.specialCondition == SpecialConditions.PromoteToQueen)
                 //    score1 +=100;
-                if(IsCenter(move1.targetCoord))
-                    score1 +=3;
+                //if(IsCenter(move1.targetCoord))
+                //    score1 +=30;
 
                 score2 += EvaluateCapture(state, move2);
                 //score2 += EvaluateCheck(state, move2);
@@ -627,8 +649,8 @@ namespace SoftwareKingdom.Chess.UI
                 //    score2 -=5;
                 //if(move2.specialCondition == SpecialConditions.PromoteToQueen)
                 //    score2 +=100;
-                if(IsCenter(move2.targetCoord))
-                    score2 +=3;
+                //if(IsCenter(move2.targetCoord))
+                //    score2 +=30;
 
                 
                 return score2.CompareTo(score1); // Descending order
@@ -641,7 +663,7 @@ namespace SoftwareKingdom.Chess.UI
             // Simple heuristic: value of the captured piece
             string targetPiece = state.GetPieceAt(move.targetCoord.rankIndex, move.targetCoord.fileIndex);
             int captureTarget = targetPiece != null && state.turn != state.GetColor(targetPiece) ? GetPieceValue(targetPiece) : 0;
-            //int checkTarget = targetPiece != null && state.turn != state.GetColor(targetPiece) && targetPiece == "K" ? 10 : 0;
+            //int checkTarget = targetPiece != null && state.turn != state.GetColor(targetPiece) && targetPiece == "K" ? 100 : 0;
 
             return captureTarget;
         }
@@ -649,7 +671,7 @@ namespace SoftwareKingdom.Chess.UI
         {
             bool isChech = gameLogic.IsCheckForMe(state);
             
-            return isChech ? 5 : 0;
+            return isChech ? 50 : 0;
         }
 
         private bool IsCenter(Coord coord)
